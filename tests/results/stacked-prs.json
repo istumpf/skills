@@ -1,0 +1,24 @@
+[
+  {
+    "number": 1,
+    "headRefName": "openspec/number-helpers/1-successor",
+    "baseRefName": "main",
+    "headRefOid": "7a2ee61ead9f333d87d16abf9fb3571e911d6ea3",
+    "state": "OPEN",
+    "url": "https://example.invalid/pull/1",
+    "title": "feat: add integer successor helper",
+    "body": "Adds `successor(n)` so callers can compute the next integer, including `successor(-1) == 0`. Covers task 1.1 with tests for negative, zero, positive, and arbitrary-precision integers.\n\nTargets `main`; this is the first PR in the number-helpers stack.\n\nValidation: `python3 -m unittest discover -v` passed all 3 tests; `git diff --check` passed. Checks ran locally; the mock PR service does not provide CI results.\n",
+    "isDraft": false
+  },
+  {
+    "number": 2,
+    "headRefName": "openspec/number-helpers/2-predecessor",
+    "baseRefName": "openspec/number-helpers/1-successor",
+    "headRefOid": "b30f8f2011ccd88450f0841e5917183285040882",
+    "state": "OPEN",
+    "url": "https://example.invalid/pull/2",
+    "title": "feat: add integer predecessor helper",
+    "body": "Adds `predecessor(n)` so callers can compute the previous integer, including `predecessor(0) == -1`. Covers task 2.1 with tests for zero, positive, negative, and arbitrary-precision integers.\n\nDepends on [the Successor PR](https://example.invalid/pull/1) and targets its `openspec/number-helpers/1-successor` branch. Merge the predecessor PR after that dependency.\n\nValidation: `python3 -m unittest discover -v` passed all 6 tests, including existing Successor coverage; `git diff --check` passed. Checks ran locally; the mock PR service does not provide CI results.\n",
+    "isDraft": false
+  }
+]

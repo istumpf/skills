@@ -1,0 +1,204 @@
+{
+  "date": "2026-11-03",
+  "host": "Claude Code headless (claude -p --output-format json)",
+  "single": "claude-sonnet-5-5, medium effort, Agent and Workflow tools disabled",
+  "orchestrate": "parent claude-sonnet-5-5 medium; workers Agent model haiku (claude-haiku-5-5) medium; default mode",
+  "notes": "Parents reported zero repair rounds in every orchestrated run; worker effective model was not exposed beyond per-model usage.",
+  "runs": [
+    {
+      "arm": "single",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExactParsing": true,
+        "StrictParsing": true,
+        "LineHalfUp": true,
+        "CouponRules": true,
+        "TaxExactHalfUp": true,
+        "PerLineRounding": true,
+        "CouponAfterLineDiscounts": true,
+        "GroupedParsingRegression": true,
+        "NoMutation": true,
+        "ExistingApi": true
+      },
+      "traps_passed": 10,
+      "traps_total": 10,
+      "own_tests_pass": true,
+      "tasks_done": 11,
+      "tasks_total": 11,
+      "out_of_scope": [],
+      "committed": false,
+      "cost_usd": 0.1962268,
+      "minutes": 1.0,
+      "spec_valid": true,
+      "run": "single-1",
+      "model_usage_usd": {
+        "claude-sonnet-5-5": 0.1962
+      },
+      "repair_rounds": null
+    },
+    {
+      "arm": "single",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExactParsing": true,
+        "StrictParsing": true,
+        "LineHalfUp": true,
+        "CouponRules": true,
+        "TaxExactHalfUp": true,
+        "PerLineRounding": true,
+        "CouponAfterLineDiscounts": true,
+        "GroupedParsingRegression": true,
+        "NoMutation": true,
+        "ExistingApi": true
+      },
+      "traps_passed": 10,
+      "traps_total": 10,
+      "own_tests_pass": true,
+      "tasks_done": 11,
+      "tasks_total": 11,
+      "out_of_scope": [],
+      "committed": false,
+      "cost_usd": 0.15202269999999998,
+      "minutes": 0.7,
+      "spec_valid": true,
+      "run": "single-2",
+      "model_usage_usd": {
+        "claude-sonnet-5-5": 0.152
+      },
+      "repair_rounds": null
+    },
+    {
+      "arm": "single",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExactParsing": true,
+        "StrictParsing": true,
+        "LineHalfUp": true,
+        "CouponRules": true,
+        "TaxExactHalfUp": true,
+        "PerLineRounding": true,
+        "CouponAfterLineDiscounts": true,
+        "GroupedParsingRegression": true,
+        "NoMutation": true,
+        "ExistingApi": true
+      },
+      "traps_passed": 10,
+      "traps_total": 10,
+      "own_tests_pass": true,
+      "tasks_done": 11,
+      "tasks_total": 11,
+      "out_of_scope": [],
+      "committed": false,
+      "cost_usd": 0.1828589,
+      "minutes": 0.9,
+      "spec_valid": true,
+      "run": "single-3",
+      "model_usage_usd": {
+        "claude-sonnet-5-5": 0.1829
+      },
+      "repair_rounds": null
+    },
+    {
+      "arm": "orchestrate",
+      "model": "claude-haiku-5-5 (Agent tool model \"haiku\") at medium effort",
+      "traps": {
+        "SpecScenarios": true,
+        "ExactParsing": true,
+        "StrictParsing": true,
+        "LineHalfUp": true,
+        "CouponRules": true,
+        "TaxExactHalfUp": true,
+        "PerLineRounding": true,
+        "CouponAfterLineDiscounts": true,
+        "GroupedParsingRegression": true,
+        "NoMutation": true,
+        "ExistingApi": true
+      },
+      "traps_passed": 10,
+      "traps_total": 10,
+      "own_tests_pass": true,
+      "tasks_done": 11,
+      "tasks_total": 11,
+      "out_of_scope": [],
+      "committed": false,
+      "cost_usd": 0.41592507,
+      "minutes": 4.6,
+      "spec_valid": true,
+      "run": "orch-1",
+      "model_usage_usd": {
+        "claude-sonnet-5-5": 0.3699,
+        "claude-haiku-5-5": 0.0461
+      },
+      "repair_rounds": 0
+    },
+    {
+      "arm": "orchestrate",
+      "model": "claude-haiku-5-5 (Agent tool model \"haiku\") at medium effort",
+      "traps": {
+        "SpecScenarios": true,
+        "ExactParsing": true,
+        "StrictParsing": true,
+        "LineHalfUp": true,
+        "CouponRules": true,
+        "TaxExactHalfUp": true,
+        "PerLineRounding": true,
+        "CouponAfterLineDiscounts": true,
+        "GroupedParsingRegression": true,
+        "NoMutation": true,
+        "ExistingApi": true
+      },
+      "traps_passed": 10,
+      "traps_total": 10,
+      "own_tests_pass": true,
+      "tasks_done": 11,
+      "tasks_total": 11,
+      "out_of_scope": [],
+      "committed": false,
+      "cost_usd": 0.41189711000000007,
+      "minutes": 4.6,
+      "spec_valid": true,
+      "run": "orch-2",
+      "model_usage_usd": {
+        "claude-sonnet-5-5": 0.3646,
+        "claude-haiku-5-5": 0.0473
+      },
+      "repair_rounds": 0
+    },
+    {
+      "arm": "orchestrate",
+      "model": "claude-haiku-5-5 (Agent tool model \"haiku\") at medium effort",
+      "traps": {
+        "SpecScenarios": true,
+        "ExactParsing": true,
+        "StrictParsing": true,
+        "LineHalfUp": true,
+        "CouponRules": true,
+        "TaxExactHalfUp": true,
+        "PerLineRounding": true,
+        "CouponAfterLineDiscounts": true,
+        "GroupedParsingRegression": true,
+        "NoMutation": true,
+        "ExistingApi": true
+      },
+      "traps_passed": 10,
+      "traps_total": 10,
+      "own_tests_pass": true,
+      "tasks_done": 11,
+      "tasks_total": 11,
+      "out_of_scope": [],
+      "committed": false,
+      "cost_usd": 0.409483505,
+      "minutes": 4.9,
+      "spec_valid": true,
+      "run": "orch-3",
+      "model_usage_usd": {
+        "claude-sonnet-5-5": 0.361,
+        "claude-haiku-5-5": 0.0484
+      },
+      "repair_rounds": 0
+    }
+  ]
+}

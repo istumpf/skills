@@ -145,6 +145,11 @@ are propagated through the stack and affected checks rerun. The run finishes
 with PR URLs in dependency order and the topmost PR branch checked out, so
 Conductor can display it. See [stacked PR details](references/stacked-prs.md).
 
+On resume, the orchestrator checks reviews and comments on each published PR.
+It routes actionable feedback to the worker for that PR's group, reviews the
+repair, updates that PR, and propagates parent fixes through later branches.
+It does not wait for a human review between groups unless you request that gate.
+
 ## Blockers and resuming
 
 The orchestrator keeps a run record in ignored scratch space or a temporary
@@ -189,5 +194,6 @@ an LLM or prove an agent follows the orchestration instructions.
 - [SKILL.md](SKILL.md): instructions loaded by the agent.
 - [references/runtimes.md](references/runtimes.md): native worker selection and continuation.
 - [references/stacked-prs.md](references/stacked-prs.md): optional publication and stack recovery.
+- [references/pr-reviews.md](references/pr-reviews.md): handling feedback posted on stacked PRs.
 
 [Back to the skill index](../../README.md) · [MIT license](../../LICENSE)

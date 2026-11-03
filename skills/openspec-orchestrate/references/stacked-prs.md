@@ -99,6 +99,13 @@ query for the PR before retrying to avoid duplicates. If all task checkboxes
 are complete on resume, finish missing publication and verification from this
 record rather than stopping at OpenSpec's `all_done` state.
 
+## Address reviews on each PR
+
+At published-PR checkpoints and on resume, read [PR review feedback](pr-reviews.md)
+and handle new reviews on each PR. Do not wait for a human review between groups
+unless the user requested that gate. A later request to address reviews resumes
+this stack from its run record, even if OpenSpec already reports `all_done`.
+
 ## Repair and verify the stack
 
 For a defect in an earlier group, make the reviewed fix on that group's branch

@@ -9,6 +9,23 @@ implementation, and requests fixes from that same worker until the group is
 accepted. Only then does it mark the tasks complete and start a new worker for
 the next group.
 
+## When to use it
+
+Orchestration costs more than applying a change in one session: the parent pays
+for spec context, handoffs, review, and re-running checks on every group. In a
+[recorded comparison](../../tests/README.md#recorded-result-2026-11-03) on a
+five-group change, it cost about 2.3× as much and took about 5× as long as a
+single agent, and caught nothing the single agent missed.
+
+Use it when:
+
+- you want one stacked PR per group so humans can review small pieces;
+- the change is long enough that a single session's context degrades; or
+- you want an independent review of each group before it is accepted.
+
+For small or moderate changes, apply the change top to bottom in one session
+instead.
+
 ## Requirements
 
 - An OpenSpec project with a change ready for implementation and the OpenSpec CLI
@@ -170,8 +187,13 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 The suite uses Python's standard library and Git. It runs the 16 implementation
 tests preserved from the original evaluations and local harness checks for fixture
-setup, file preservation, stacked PRs, and completed-run verification. The same
-command runs in [CI](../../.github/workflows/tests.yml) on Python 3.9 and 3.13.
+setup, file preservation, stacked PRs, and completed-run verification, plus
+checks that the comparison scenario's hidden traps separate correct from naive
+work. The same command runs in [CI](../../.github/workflows/tests.yml) on Python
+3.9 and 3.13.
+
+To decide whether orchestration is worth its cost for your changes, run the
+[orchestrated vs. single-agent comparison](../../tests/README.md#orchestrated-vs-single-agent-comparison).
 
 The historical real-agent runs exercised sequential workers, parent review,
 partially completed groups, stacked publication, and a completed-run resume.

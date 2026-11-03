@@ -82,3 +82,99 @@ metadata, and the mock has no remote CI or human review.
 Repair rounds, publication-failure recovery, restacking after repairs, and a
 Claude-hosted run were not exercised in the original evaluations. The included
 results do not claim coverage for them.
+
+## Orchestrated vs. single-agent comparison
+
+The `comparison` scenario asks one question: does per-group delegation and
+parent review catch defects that a single agent applying the spec top to bottom
+would miss, and at what cost?
+
+The `invoice-totals` change has five groups that depend on each other. Rules
+that matter are written in the spec prose and design decisions, not in
+`tasks.md`. Several groups extend earlier work; group 5, for example, widens
+group 1's parser. Hidden checks in `hidden/comparison/` are never copied into the
+evaluation repository. Each test class scores one trap:
+
+| Trap | Where the rule lives | Typical miss |
+| --- | --- | --- |
+| `SpecScenarios` | Spec scenarios | Baseline; not counted as a trap |
+| `ExactParsing` | Group 1 prose | `int(float(text) * 100)` turns `"19.99"` into 1998 |
+| `StrictParsing` | Group 1 prose | Accepting `"1e3"`, `"+5"`, `"NaN"` |
+| `LineHalfUp` | Group 2 prose | `round()` is half-even |
+| `CouponRules` | Group 3 prose | Fixed coupon larger than the subtotal |
+| `TaxExactHalfUp` | Group 4 prose | Float rate gives 11 instead of 12 for 1000 at 1.15% |
+| `PerLineRounding` | Design decision | Rounding once on the summed subtotal |
+| `CouponAfterLineDiscounts` | Cross-group | Coupon applied to list price |
+| `GroupedParsingRegression` | Group 5 vs. group 1 | `replace(",", "")` accepts `"1,23"` |
+| `NoMutation` | Group 5 prose | Defaulting `discount_percent` into caller lines |
+| `ExistingApi` | Proposal | Breaking `format_cents` |
+
+`reference/comparison/` passes every check. `reference/comparison-naive/`
+passes the written scenarios and fails every trap; the offline suite asserts
+both, so each trap is known to separate correct from plausible-but-wrong work.
+
+### Running it
+
+Prepare several runs per arm in fresh destinations. Use the same host and
+parent model for both arms; `--model` is the worker model for `orchestrate` and
+a label for `single`, whose model is the session's model.
+
+```sh
+python3 tests/compare.py prepare single --directory /tmp/cmp/single-1 --model '<model>'
+python3 tests/compare.py prepare orchestrate --directory /tmp/cmp/orch-1 --model '<model>'
+```
+
+Start a fresh conversation in each generated `repo/` and give it
+`../REQUEST.txt`. Record wall-clock minutes yourself and the run's cost from the
+host (for example `/cost` in Claude Code). Headless Claude Code runs can supply
+the cost directly:
+
+```sh
+cd /tmp/cmp/single-1/repo
+claude -p "$(cat ../REQUEST.txt)" --model claude-sonnet-5-5 --effort medium \
+  --output-format json --permission-mode acceptEdits \
+  --allowedTools Bash Read Edit Write Glob Grep Skill \
+  --disallowedTools Agent Workflow > ../result.json
+```
+
+For the orchestrate arm, also allow `Agent` and `SendMessage`, and do not
+disallow `Agent`. Then score and report:
+
+```sh
+python3 tests/compare.py score /tmp/cmp/single-1 --claude-result /tmp/cmp/single-1/result.json --minutes 0.9
+python3 tests/compare.py report /tmp/cmp/*
+```
+
+`score` writes `score.json` with per-trap results, whether the agent's own tests
+pass, completed tasks, files changed outside the expected scope, accidental
+commits, and OpenSpec validation (`--skip-openspec` when the CLI is absent).
+Use `--cost` instead of `--claude-result` for other hosts. Do not take minutes
+from the result's `duration_ms`: it omits time spent waiting on subagents.
+Rescoring keeps previously recorded cost and minutes. `report` prints a Markdown
+table grouped by arm.
+
+Agent runs vary. Use at least three runs per arm before drawing conclusions,
+and also read the orchestrator's run record to see whether its review found the
+defects or the worker avoided them on the first pass. A trap that both arms
+always pass or always fail does not tell you anything about review.
+
+### Recorded result (2026-11-03)
+
+[`results/comparison-2026-11-03.json`](results/comparison-2026-11-03.json)
+records three headless Claude Code runs per arm. Single: Sonnet 5.5 at medium
+effort, with delegation disabled. Orchestrate: a Sonnet 5.5 parent with Haiku
+5.5 workers, all at medium effort.
+
+| | Single | Orchestrate |
+| --- | --- | --- |
+| Traps passed | 10/10 in every run | 10/10 in every run |
+| Mean cost | $0.18 | $0.41 |
+| Mean wall-clock | 0.9 min | 4.7 min |
+| Repair rounds | – | 0 in every run |
+
+Both arms got everything right, so on a five-group change whose rules are all
+written down, orchestration added cost and time without catching anything. The
+parent's own share (~$0.36) exceeded the whole single-agent run, so cheaper
+workers did not offset the overhead. This fixture cannot tell the two apart.
+Neither very long changes (where one context degrades) nor rules missing from
+the spec (where review has something to catch) are tested yet.

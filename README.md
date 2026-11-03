@@ -7,19 +7,43 @@ under `skills/`, with installation instructions, examples, and agent guidance.
 
 | Skill | Short version |
 | --- | --- |
-| [OpenSpec Orchestrate](skills/openspec-orchestrate/README.md) | Apply an OpenSpec change one task group at a time, using a fresh worker with your selected model and parent review before acceptance. Optionally publish one stacked PR per group. |
+| [OpenSpec Stack Apply](skills/openspec-stack-apply/README.md) | Apply an OpenSpec change top to bottom in one session with one `gh stack` layer per task group, then publish draft PRs and review them. |
+| [Stacked PR Feedback](skills/stacked-pr-feedback/README.md) | Triage review feedback across a PR stack, fix each issue on the PR that introduced it, restack, and reply. Works on any stack; optional local AI review. |
 
 ## Quick example
 
-After [installing OpenSpec Orchestrate](skills/openspec-orchestrate/README.md#installation),
-invoke it in the project containing your OpenSpec change:
+In the project containing your OpenSpec change:
 
 ```text
-$openspec-orchestrate <change-name> using worker model <model>
+/openspec-stack-apply <change-name>
 ```
 
-Use `/openspec-orchestrate` in Claude Code. Append `with one stacked PR per group`
-to request a PR stack. See the skill's README for the complete workflow and usage.
+It builds one stacked PR per task group, opens them as drafts, and reviews them
+with `stacked-pr-feedback`. Run `/stacked-pr-feedback` again whenever reviewers
+comment. Use `$` instead of `/` in Codex.
+
+## Installation
+
+Clone this repository, then from its root link each skill into both global
+skill directories:
+
+```sh
+for skill in openspec-stack-apply stacked-pr-feedback; do
+  for skill_home in "$HOME/.codex/skills" "$HOME/.claude/skills"; do
+    mkdir -p "$skill_home"
+    target="$skill_home/$skill"
+    if [ -e "$target" ] || [ -L "$target" ]; then
+      printf 'Already installed; leaving in place: %s\n' "$target"
+    else
+      ln -s "$PWD/skills/$skill" "$target"
+    fi
+  done
+done
+```
+
+Keep the checkout at a stable path; moving it breaks the links. Alternatively,
+copy each skill directory, including its `scripts/`. Start a new agent session
+if a skill does not appear.
 
 ## Tests
 
@@ -31,8 +55,8 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 [GitHub Actions](.github/workflows/tests.yml) runs this suite on pushes, pull
 requests, and manual dispatches using Python 3.9 and 3.13. It needs no model
-credentials. [Evaluation instructions](tests/README.md) explain how to rerun
-the original scenarios with real agents.
+credentials. [Evaluation instructions](tests/README.md) explain how to compare
+ways of applying a change with real agents.
 
 ## License
 

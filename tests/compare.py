@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Compare orchestrated and single-agent application of one OpenSpec change.
+"""Compare ways of applying one OpenSpec change against hidden trap tests.
+
+Arms: `single` applies the change top to bottom with no skill; `skill` applies
+it with the SKILL.md given by --skill. The fixture has no remote, so skills that
+publish PRs cannot finish here.
 
 prepare: create an isolated run for one arm. score: grade a finished run with
 hidden trap tests. report: aggregate scored runs by arm.
@@ -8,13 +12,12 @@ hidden trap tests. report: aggregate scored runs by arm.
 import argparse
 import json
 from pathlib import Path
+import re
 import shutil
 import statistics
 import subprocess
 import sys
 import tempfile
-
-from evaluate import SKILL, command, git, markers_by_id
 
 HERE = Path(__file__).resolve().parent
 FIXTURE = HERE / "fixtures/comparison"
@@ -25,10 +28,25 @@ EXPECTED_CHANGES = {"invoice.py", "test_invoice.py", TASKS}
 TRAPS = ["SpecScenarios", "ExactParsing", "StrictParsing", "LineHalfUp", "CouponRules",
          "TaxExactHalfUp", "PerLineRounding", "CouponAfterLineDiscounts",
          "GroupedParsingRegression", "NoMutation", "ExistingApi"]
-ARMS = ("single", "orchestrate")
+ARMS = ("single", "skill")
 
 
-def prepare(arm, directory, model):
+def command(args, cwd):
+    return subprocess.check_output(args, cwd=cwd, text=True).strip()
+
+
+def git(repo, *args):
+    return command(["git", *args], repo)
+
+
+def markers_by_id(text):
+    return {task: mark.lower() for mark, task in
+            re.findall(r"^- \[([ xX])\] (\d+\.\d+)\b", text, re.MULTILINE)}
+
+
+def prepare(arm, directory, model, skill=None):
+    if (arm == "skill") != bool(skill):
+        raise ValueError("--skill is required for the skill arm and only allowed there")
     root = Path(directory).resolve()
     root.mkdir(parents=True)  # Refuse to replace an existing run.
     repo = root / "repo"
@@ -39,12 +57,12 @@ def prepare(arm, directory, model):
     git(repo, "config", "commit.gpgsign", "false")
     (root / "empty-hooks").mkdir()
     git(repo, "config", "core.hooksPath", str(root / "empty-hooks"))
-    # A baseline commit lets scoring diff the agent's work; the agent must not commit.
+    # A baseline commit lets scoring diff the agent's work, committed or not.
     git(repo, "add", ".")
     git(repo, "commit", "-m", "chore: comparison fixture baseline")
-    if arm == "orchestrate":
-        prompt = (f"Use $openspec-orchestrate at {SKILL} to apply {CHANGE} using worker "
-                  f"model {model}. Complete all remaining groups using the default mode.")
+    if arm == "skill":
+        prompt = (f"Use the skill at {Path(skill).resolve()} to apply the OpenSpec change "
+                  f"{CHANGE}. There is no Git remote; skip any publishing step.")
     else:
         prompt = (f"Apply the OpenSpec change {CHANGE} yourself, top to bottom, in this "
                   "conversation. Use `openspec status` and `openspec instructions apply` "
@@ -55,7 +73,9 @@ def prepare(arm, directory, model):
                "modify any skill files.\n")
     (root / "REQUEST.txt").write_text(prompt)
     (root / "evaluation.json").write_text(json.dumps(
-        {"case": "comparison", "arm": arm, "model": model}, indent=2) + "\n")
+        {"case": "comparison", "arm": arm, "model": model,
+         "skill": str(Path(skill).resolve()) if skill else None,
+         "baseline": git(repo, "rev-parse", "HEAD")}, indent=2) + "\n")
     return root
 
 
@@ -80,7 +100,7 @@ def score(directory, cost=None, minutes=None, validate_spec=True):
             traps[trap] = run_tests(temp, f"test_hidden_invoice.{trap}")
     own_tests = (repo / "test_invoice.py").is_file() and run_tests(repo, "discover")
     tasks = markers_by_id((repo / TASKS).read_text())
-    changed = set(git(repo, "diff", "--name-only", "HEAD").splitlines())
+    changed = set(git(repo, "diff", "--name-only", metadata.get("baseline", "HEAD")).splitlines())
     untracked = set(git(repo, "ls-files", "--others", "--exclude-standard").splitlines())
     result = {
         "arm": metadata["arm"],
@@ -92,7 +112,7 @@ def score(directory, cost=None, minutes=None, validate_spec=True):
         "tasks_done": sum(mark == "x" for mark in tasks.values()),
         "tasks_total": len(tasks),
         "out_of_scope": sorted((changed | untracked) - EXPECTED_CHANGES),
-        "committed": git(repo, "rev-list", "--count", "HEAD") != "1",
+        "committed": int(git(repo, "rev-list", "--count", "HEAD")) - 1,
         # Rescoring keeps host-reported costs unless new ones are given.
         "cost_usd": previous.get("cost_usd") if cost is None else cost,
         "minutes": previous.get("minutes") if minutes is None else minutes,
@@ -133,7 +153,8 @@ def report(directories):
         ("Mean traps passed", lambda s: s["traps_passed"]),
         ("Own tests pass", lambda s: int(s["own_tests_pass"])),
         ("Mean tasks done", lambda s: s["tasks_done"]),
-        ("Runs out of scope", lambda s: int(bool(s["out_of_scope"]) or s["committed"])),
+        ("Runs out of scope", lambda s: int(bool(s["out_of_scope"]))),
+        ("Runs that committed", lambda s: int(bool(s["committed"]))),
         ("Mean cost (USD)", lambda s: s.get("cost_usd")),
         ("Mean minutes", lambda s: s["minutes"]),
     ]
@@ -154,8 +175,8 @@ def main():
     setup = commands.add_parser("prepare")
     setup.add_argument("arm", choices=ARMS)
     setup.add_argument("--directory", type=Path, required=True)
-    setup.add_argument("--model", required=True,
-                       help="worker model for orchestrate; recorded label for single")
+    setup.add_argument("--model", required=True, help="model label recorded with the run")
+    setup.add_argument("--skill", type=Path, help="SKILL.md to apply with (skill arm only)")
     grade = commands.add_parser("score")
     grade.add_argument("directory", type=Path)
     grade.add_argument("--cost", type=float, help="run cost in USD reported by the host")
@@ -168,7 +189,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.action == "prepare":
-            root = prepare(args.arm, args.directory, args.model)
+            root = prepare(args.arm, args.directory, args.model, args.skill)
             print(f"Prepared {root / 'repo'}\nGive the agent {root / 'REQUEST.txt'}")
         elif args.action == "score":
             if args.claude_result:

@@ -8,6 +8,7 @@ import unittest
 import compare
 
 REFERENCE = compare.HERE / "reference"
+SKILL = compare.HERE.parent / "skills/openspec-stack-apply/SKILL.md"
 
 
 class ComparisonHarnessTests(unittest.TestCase):
@@ -17,7 +18,8 @@ class ComparisonHarnessTests(unittest.TestCase):
         self.base = Path(self.temp.name)
 
     def finished_run(self, arm, implementation):
-        root = compare.prepare(arm, self.base / f"{arm}-{implementation}", "test-model")
+        root = compare.prepare(arm, self.base / f"{arm}-{implementation}", "test-model",
+                               SKILL if arm == "skill" else None)
         repo = root / "repo"
         shutil.copy2(REFERENCE / implementation / "invoice.py", repo / "invoice.py")
         (repo / "test_invoice.py").write_text(
@@ -29,12 +31,25 @@ class ComparisonHarnessTests(unittest.TestCase):
         tasks.write_text(tasks.read_text().replace("- [ ]", "- [x]"))
         return root
 
-    def test_requests_differ_only_in_delegation(self):
+    def test_requests_name_the_skill_only_for_the_skill_arm(self):
         single = compare.prepare("single", self.base / "s", "test-model")
-        orchestrated = compare.prepare("orchestrate", self.base / "o", "test-model")
+        skilled = compare.prepare("skill", self.base / "k", "test-model", SKILL)
         self.assertIn("Do not spawn subagents", (single / "REQUEST.txt").read_text())
-        self.assertIn("openspec-orchestrate", (orchestrated / "REQUEST.txt").read_text())
+        self.assertIn(str(SKILL), (skilled / "REQUEST.txt").read_text())
         self.assertFalse((single / "repo/test_hidden_invoice.py").exists())
+        with self.assertRaises(ValueError):
+            compare.prepare("skill", self.base / "missing", "test-model")
+        with self.assertRaises(ValueError):
+            compare.prepare("single", self.base / "extra", "test-model", SKILL)
+
+    def test_committed_work_is_scored_against_the_baseline(self):
+        root = self.finished_run("skill", "comparison")
+        compare.git(root / "repo", "add", ".")
+        compare.git(root / "repo", "commit", "-m", "feat: apply invoice-totals")
+        result = compare.score(root, validate_spec=False)
+        self.assertEqual(result["traps_passed"], result["traps_total"])
+        self.assertEqual(result["out_of_scope"], [])
+        self.assertEqual(result["committed"], 1)
 
     def test_reference_passes_every_trap(self):
         result = compare.score(self.finished_run("single", "comparison"), validate_spec=False)
@@ -43,10 +58,10 @@ class ComparisonHarnessTests(unittest.TestCase):
         self.assertTrue(result["own_tests_pass"])
         self.assertEqual(result["tasks_done"], result["tasks_total"])
         self.assertEqual(result["out_of_scope"], [])
-        self.assertFalse(result["committed"])
+        self.assertEqual(result["committed"], 0)
 
     def test_naive_passes_scenarios_but_fails_each_trap(self):
-        result = compare.score(self.finished_run("orchestrate", "comparison-naive"),
+        result = compare.score(self.finished_run("skill", "comparison-naive"),
                                validate_spec=False)
         self.assertTrue(result["traps"]["SpecScenarios"])
         self.assertTrue(result["traps"]["ExistingApi"])
@@ -57,11 +72,11 @@ class ComparisonHarnessTests(unittest.TestCase):
         good = self.finished_run("single", "comparison")
         (good / "repo/notes.txt").write_text("overwritten")
         compare.score(good, cost=0.2, minutes=4, validate_spec=False)
-        naive = self.finished_run("orchestrate", "comparison-naive")
+        naive = self.finished_run("skill", "comparison-naive")
         compare.score(naive, cost=0.4, minutes=10, validate_spec=False)
         self.assertEqual(compare.score(good, validate_spec=False)["out_of_scope"], ["notes.txt"])
         table = compare.report([good, naive])
-        self.assertIn("| Metric | single | orchestrate |", table)
+        self.assertIn("| Metric | single | skill |", table)
         self.assertIn("| ExactParsing | 1/1 | 0/1 |", table)
         self.assertIn("| Mean cost (USD) | 0.2 | 0.4 |", table)
 

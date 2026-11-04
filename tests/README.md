@@ -30,8 +30,13 @@ a private sandbox repository; that run is not automated.
 `compare.py` asks whether a way of applying an OpenSpec change catches defects
 that plain top-to-bottom application misses, and at what cost. The `single`
 arm applies the change with no skill and no delegation. The `skill` arm applies
-it with any SKILL.md you pass. The fixture has no Git remote, so skills that
+it with any SKILL.md you pass. The fixtures have no Git remote, so skills that
 publish PRs are told to skip publishing.
+
+There are two cases, chosen with `--case`. Each keeps its trap list, owning
+groups, and mutants in `hidden/<case>/case.py`.
+
+### `comparison`: invoice totals
 
 The `invoice-totals` change has five groups that depend on each other. Rules
 that matter are written in the spec prose and design decisions, not in
@@ -56,6 +61,38 @@ evaluation repository. Each test class scores one trap:
 `reference/comparison/` passes every check. `reference/comparison-naive/`
 passes the written scenarios and fails every trap; the offline suite asserts
 both, so each trap is known to separate correct from plausible-but-wrong work.
+Every recorded agent run so far passes all ten traps, so on its own this case
+cannot separate one way of applying a change from another.
+
+### `loans`: held-out library loans
+
+The `loan-desk` change has six groups over a different domain: due dates,
+overdue days, fines, renewals, holds, and receipts. No skill text names its
+traps, and the offline suite fails if a SKILL.md mentions a trap's mistake. The
+rules are placed where a reader of only scenarios and tasks would miss them:
+
+| Trap | Where the rule lives | Typical miss |
+| --- | --- | --- |
+| `SpecScenarios` | Spec scenarios | Baseline; not counted as a trap |
+| `RejectsDatetime` | Group 1 prose | `isinstance(x, date)` accepts a `datetime` |
+| `ChainedClosures` | Group 1 prose | Moving a closed due date forward by one day only |
+| `OpenDaysOnly` | Design decision | Counting calendar days as overdue |
+| `BookGraceDay` | Group 3 prose | Charging a book's first overdue day |
+| `FineCap` | Design decision only | No cap at the replacement fee |
+| `RenewFromDue` | Group 4 prose | Counting the renewal from today |
+| `RenewalLimit` | Group 4 prose | Allowing a third renewal |
+| `NoMutation` | Design decision | Updating the caller's loan in place |
+| `HoldRules` | Group 5 vs. group 4 | The borrower's own hold blocking renewal |
+| `ReceiptCrossGroup` | Groups 2, 3, and 6 | Calendar days, no grace, or no cap on receipts |
+| `ExistingApi` | Proposal | Editing `HOLIDAYS` or `is_open` |
+
+Task 6.3 asks for confirmation from circulation staff, which cannot happen in
+the evaluation repository. `unprovable_checked` records it if checked, and
+`report` counts runs that check it.
+
+Before comparing arms on this case, calibrate it: run the `single` arm at least
+four times and set aside traps it passes in every run. They show nothing about
+a skill.
 
 ### Running it
 
@@ -63,8 +100,8 @@ Prepare several runs per arm in fresh destinations, using the same host and
 model for every arm. `--model` is a label recorded with the run.
 
 ```sh
-python3 tests/compare.py prepare single --directory /tmp/cmp/single-1 --model '<model>'
-python3 tests/compare.py prepare skill --directory /tmp/cmp/skill-1 --model '<model>' \
+python3 tests/compare.py prepare single --case loans --directory /tmp/cmp/single-1 --model '<model>'
+python3 tests/compare.py prepare skill --case loans --directory /tmp/cmp/skill-1 --model '<model>' \
   --skill skills/openspec-stack-apply/SKILL.md
 ```
 
@@ -97,7 +134,7 @@ Use `--cost` instead of `--claude-result` for other hosts.
 
 Test strength runs the agent's own `test_*.py` files against the reference
 implementation, then against one mutant per trap: the reference with that
-trap's plausible mistake applied (`MUTANTS` in `compare.py`). Tests that fail
+trap's plausible mistake applied (`MUTANTS` in `hidden/<case>/case.py`). Tests that fail
 on the reference, because they are stricter than the spec or wrong, are listed
 in `tests_failing_on_reference` and set aside. A mutant is killed when any
 other test fails on it. `mutants_killed_count` therefore measures whether the

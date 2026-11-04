@@ -29,7 +29,7 @@ class ReviewBenchTests(unittest.TestCase):
                     # Layer 2's half-even rounding also breaks per-line rounding.
                     5: ["LineHalfUp", "PerLineRounding", "GroupedParsingRegression"]}
         self.assertEqual({int(b.split("/")[1][0]): failed for b, failed in
-                          compare.layer_failures(repo).items()}, expected)
+                          compare.layer_failures(review_bench.CASE, repo).items()}, expected)
         for branch in review_bench.BRANCHES:
             with tempfile.TemporaryDirectory() as temp:
                 for name in ("invoice.py", "test_invoice.py"):
@@ -38,14 +38,14 @@ class ReviewBenchTests(unittest.TestCase):
         self.assertIn("notes.txt", compare.git(repo, "diff", "--name-only",
                                                "main", review_bench.BRANCHES[0]))
         self.assertEqual(compare.git(repo, "branch", "--show-current"), review_bench.BRANCHES[-1])
-        tasks = compare.markers_by_id((repo / compare.TASKS).read_text())
+        tasks = compare.markers_by_id((repo / review_bench.CASE.tasks).read_text())
         self.assertTrue(all(mark == "x" for mark in tasks.values()))
 
     def test_decoys_are_correct(self):
         repo = review_bench.prepare("plain", self.base / "run", "test-model") / "repo"
-        coupons = compare.committed_source(repo, review_bench.BRANCHES[2])
-        tax = compare.committed_source(repo, review_bench.BRANCHES[3])
-        self.assertTrue(compare.hidden_traps(tax, ["TaxExactHalfUp"])["TaxExactHalfUp"])
+        coupons = compare.committed_source(repo, review_bench.BRANCHES[2], "invoice.py")
+        tax = compare.committed_source(repo, review_bench.BRANCHES[3], "invoice.py")
+        self.assertTrue(compare.hidden_traps(review_bench.CASE, tax, ["TaxExactHalfUp"])["TaxExactHalfUp"])
         namespace = {}
         exec(coupons, namespace)
         for subtotal, value, expected in ((5, 50, 3), (2000, 15, 300), (1, 50, 1), (3, 50, 2)):

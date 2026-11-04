@@ -1,0 +1,1 @@
+This is an isolated skill evaluation repository. Work only within this repository. Do not edit the skill under evaluation or any other files outside this repository. Use Python's standard library only and its unittest runner for validation. Do not commit.

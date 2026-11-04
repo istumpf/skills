@@ -19,9 +19,10 @@ import subprocess
 
 import compare
 
+CASE = compare.load_case("comparison")
 LAYERS = compare.HERE / "fixtures/review/layers"
 ARMS = ("plain", "skill")
-BRANCHES = [f"{compare.CHANGE}/{n}-{slug}" for n, slug in enumerate(
+BRANCHES = [f"{CASE.change}/{n}-{slug}" for n, slug in enumerate(
     ("amount-parsing", "line-totals", "coupons", "sales-tax", "invoice-summary"), 1)]
 # Each plant names the layers a finding may be attributed to and a pattern its
 # path or body must match (case-insensitive). One finding may match several.
@@ -43,11 +44,11 @@ def build_stack(repo):
         compare.git(repo, "checkout", "-q", "-b", branch)
         for path in (LAYERS / str(n)).iterdir():
             shutil.copy2(path, repo / path.name)
-        tasks = repo / compare.TASKS
+        tasks = repo / CASE.tasks
         tasks.write_text(re.sub(rf"^- \[ \] ({n}\.\d+)", r"- [x] \1",
                                 tasks.read_text(), flags=re.MULTILINE))
         compare.git(repo, "add", ".")
-        compare.git(repo, "commit", "-q", "-m", f"feat({compare.CHANGE}): {branch.split('-', 2)[-1]}")
+        compare.git(repo, "commit", "-q", "-m", f"feat({CASE.change}): {branch.split('-', 2)[-1]}")
 
 
 def repo_state(repo):
@@ -62,7 +63,7 @@ def prepare(arm, directory, model, skill=None):
     root = Path(directory).resolve()
     root.mkdir(parents=True)  # Refuse to replace an existing run.
     repo = root / "repo"
-    shutil.copytree(compare.FIXTURE, repo)
+    shutil.copytree(CASE.fixture, repo)
     for args in (("init", "-q", "--initial-branch=main"), ("config", "user.name", "Skill Evaluation"),
                  ("config", "user.email", "skill-evaluation@example.invalid"),
                  ("config", "commit.gpgsign", "false")):
@@ -82,11 +83,11 @@ def prepare(arm, directory, model, skill=None):
                   "There is no Git remote and there are no PRs: skip collection, triage, "
                   "fixes, replies, and pushing, and use branch names wherever the skill asks "
                   f"for PR identifiers. The acceptance criteria are in the OpenSpec change "
-                  f"{compare.CHANGE}. {output}")
+                  f"{CASE.change}. {output}")
     else:
         prompt = (f"Review this stack of local branches, trunk `main`, bottom to top: {stack}. "
                   "Each branch is one task group of the OpenSpec change "
-                  f"{compare.CHANGE} and targets the branch below it. Report defects "
+                  f"{CASE.change} and targets the branch below it. Report defects "
                   "against the change's proposal, design, and specs. Do not spawn "
                   f"subagents or delegate. {output}")
     prompt += (f"\n\nWork in {repo}. All writes must remain inside {root}. Read AGENTS.md. "
@@ -100,7 +101,7 @@ def prepare(arm, directory, model, skill=None):
 
 
 def layer_of(finding):
-    match = re.match(rf"{re.escape(compare.CHANGE)}/(\d+)-", str(finding.get("branch", "")))
+    match = re.match(rf"{re.escape(CASE.change)}/(\d+)-", str(finding.get("branch", "")))
     return int(match.group(1)) if match else None
 
 

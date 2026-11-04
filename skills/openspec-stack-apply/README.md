@@ -1,21 +1,13 @@
 # OpenSpec Stack Apply
 
-Implement an OpenSpec change in one session, with one stacked PR per task
-group. The agent works through the change top to bottom. Before each group it
-creates a new layer with GitHub's [`gh stack`](https://github.com/github/gh-stack),
-then implements and tests the group and commits it with its task markers. At the
-end it publishes the stack as draft PRs and reviews them with
-[Stacked PR Feedback](../stacked-pr-feedback/README.md).
+Implement an OpenSpec change in one session, with one small, tested PR per task
+group. The agent builds layers while implementing, publishes them **ready for
+review**, and handles confirmed review findings across the stack in a batch. It then gives you the PR links for human or ChatGPT web review.
 
-## Why one session instead of a worker per group
-
-In a [recorded comparison](../../tests/README.md#recorded-result-2026-11-03),
-one session applying a five-group change cost about $0.18 and took about a
-minute. A parent delegating each group to a fresh worker cost $0.41, took nearly
-five minutes, and caught nothing extra. This skill keeps the single session and
-adds the parts that do pay off: one reviewable PR per group, built while
-implementing so every layer is a real tested state, and a review pass before
-the PRs leave draft.
+Local LLM pre-review is opt-in. The goal is fewer manual handoffs while keeping
+PRs easy to review. The [evaluations](../../tests/README.md) found no general
+code-correctness advantage on the larger fixture; stack construction is the
+benefit this workflow provides.
 
 ## Requirements
 
@@ -26,8 +18,9 @@ the PRs leave draft.
 - `gh pr view --json` must support `headRefOid` for feedback collection.
   If the field is unavailable, the skill asks you to upgrade `gh`.
 - A clean working tree.
-- Optional: [Stacked PR Feedback](../stacked-pr-feedback/README.md) for the
-  review step, and a `tdd` skill, which the agent uses when present.
+- [Stacked PR Feedback](../stacked-pr-feedback/README.md) for automatic feedback
+  handling. Findings outside GitHub comments are retrieved through the
+  repository's configured tools when available.
 
 ## Usage
 
@@ -36,8 +29,9 @@ the PRs leave draft.
 ```
 
 Use `$openspec-stack-apply` in Codex. The request authorizes creating branches,
-commits, pushes, and draft PRs. The agent asks before marking PRs ready, and it
-never merges or archives the change.
+commits, pushes, PRs ready for review, and confirmed in-scope review fixes with
+replies. There is no separate readiness confirmation. The agent never merges or
+archives the change. Spec conflicts and disputed findings come back to you.
 
 | Group in `tasks.md` | Branch | PR base |
 | --- | --- | --- |
@@ -48,7 +42,13 @@ never merges or archives the change.
 If a later group exposes a bug in an earlier layer, the fix is committed on that
 layer and the layers above are rebased with `gh stack rebase --upstack`. Rerun
 the command to resume: it continues from the existing stack and the first
-unchecked task.
+unfinished task. Task markers record completion; PR bodies record validation.
+
+Configured automated checks and reviews are checked on the published heads, with up to ten minutes of
+waiting per push and two repair batches. Anything still pending is reported.
+Once you finish your external review, bring its findings back with
+`/stacked-pr-feedback auto` to have the agent apply confirmed fixes across the
+stack, or omit `auto` to approve its plan first.
 
 ## Installation
 

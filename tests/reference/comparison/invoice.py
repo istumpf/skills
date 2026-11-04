@@ -2,8 +2,8 @@ from decimal import ROUND_HALF_UP, Decimal
 import re
 
 CURRENCY = "USD"
-_AMOUNT = re.compile(r"(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d{1,2}))?")
-_RATE = re.compile(r"\d+(?:\.\d+)?")
+_AMOUNT = re.compile(r"(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d{1,2}))?", re.ASCII)
+_RATE = re.compile(r"\d+(?:\.\d+)?", re.ASCII)
 
 
 def format_cents(cents):

@@ -11,8 +11,9 @@ It needs Git, an authenticated `gh`, and GitHub's
 restacking, pushing, and post-merge sync. Stacks not created with `gh stack` are
 adopted first. In an OpenSpec repository it also checks feedback against the
 change's spec and proposes spec edits instead of silently changing required
-behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) runs it in
-review mode after publishing.
+behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) calls it in
+auto mode after publishing PRs ready for review, to handle review feedback.
+Local AI review is a separate opt-in mode.
 
 Your `gh` must support `gh pr view --json headRefOid`. If the field is
 unavailable, upgrade using the [official installation instructions](https://github.com/cli/cli#installation).
@@ -33,7 +34,7 @@ From a checkout of the repository, on any branch in the stack:
 | --- | --- |
 | Default | Collect and triage, then wait for your approval before changing code, pushing, or replying |
 | `auto` | Apply fixes and post fix replies without asking; disagreements, questions, spec changes, and rebase conflicts still wait for you |
-| `review` | First run one local AI reviewer per PR in parallel and triage its findings with GitHub feedback; findings are never posted |
+| `review` | First run local AI reviewers in parallel (one for a small stack, else one per PR) that check each acceptance criterion has a test that would catch a naive implementation, and triage its findings with GitHub feedback; findings are never posted |
 
 Use `$stacked-pr-feedback` in Codex.
 

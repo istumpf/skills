@@ -1,0 +1,1212 @@
+{
+  "date": "2026-11-04",
+  "host": "Claude Code headless (claude -p --output-format json), claude-sonnet-5-5, medium effort",
+  "apply": {
+    "case": "loans",
+    "single": "no skill, Agent and Workflow disabled",
+    "skill": "skills/openspec-stack-apply/SKILL.md at this branch, publishing and review skipped",
+    "runs": [
+      {
+        "run": "single-1",
+        "arm": "single",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": false,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": false,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": false
+        },
+        "mutants_killed_count": 8,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {},
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 0,
+        "cost_usd": 0.12567869999999998,
+        "minutes": 0.7,
+        "spec_valid": true
+      },
+      {
+        "run": "single-2",
+        "arm": "single",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": false,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": false,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": false
+        },
+        "mutants_killed_count": 8,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {},
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 0,
+        "cost_usd": 0.1347343,
+        "minutes": 0.8,
+        "spec_valid": true
+      },
+      {
+        "run": "single-3",
+        "arm": "single",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": false,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": false,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": false
+        },
+        "mutants_killed_count": 8,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {},
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 0,
+        "cost_usd": 0.13178339999999997,
+        "minutes": 0.9,
+        "spec_valid": true
+      },
+      {
+        "run": "single-4",
+        "arm": "single",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": false,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": false,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": false
+        },
+        "mutants_killed_count": 8,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {},
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 0,
+        "cost_usd": 0.1340664,
+        "minutes": 0.8,
+        "spec_valid": true
+      },
+      {
+        "run": "skill-1",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": false,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 10,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.12081230000000001,
+        "minutes": 0.5,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "589f60ea-db0e-4a40-a126-cbf1d30fb813",
+          "num_turns": 7,
+          "usage": {
+            "input_tokens": 10,
+            "cache_creation_input_tokens": 22846,
+            "cache_read_input_tokens": 114383,
+            "output_tokens": 1797
+          },
+          "workload": "verification of pre-existing implementation"
+        }
+      },
+      {
+        "run": "skill-2",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": false,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 10,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [
+          "test_loans.DueDateTests.test_unknown_kind"
+        ],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.148242,
+        "minutes": 0.6,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "10f821e1-25dc-48fd-8a49-30ad1366550e",
+          "num_turns": 7,
+          "usage": {
+            "input_tokens": 12,
+            "cache_creation_input_tokens": 27723,
+            "cache_read_input_tokens": 155660,
+            "output_tokens": 2176
+          },
+          "workload": "verification of pre-existing implementation"
+        }
+      },
+      {
+        "run": "skill-3",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": false,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 10,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.1362209,
+        "minutes": 0.4,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "8483a1cd-50fc-4ff3-a852-0ce6ab838e16",
+          "num_turns": 6,
+          "usage": {
+            "input_tokens": 10,
+            "cache_creation_input_tokens": 26292,
+            "cache_read_input_tokens": 117729,
+            "output_tokens": 1926
+          },
+          "workload": "verification of pre-existing implementation"
+        }
+      },
+      {
+        "run": "skill-4",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.1178251,
+        "minutes": 0.6,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "15ae7abe-c96d-4680-8708-a420a009a8bb",
+          "num_turns": 7,
+          "usage": {
+            "input_tokens": 12,
+            "cache_creation_input_tokens": 20387,
+            "cache_read_input_tokens": 142231,
+            "output_tokens": 2203
+          },
+          "workload": "verification of pre-existing implementation"
+        }
+      }
+    ],
+    "measurement_caveat": "The recorded result.json sessions for skill-1 through skill-4 in /tmp/cal start with all six loan-desk branches and completed implementation already present. Their cost and duration measure verification of existing work, not fresh implementation. Original implementation costs are not included. Artifact correctness and mutant scores remain usable; the reported cost/time comparison against single and the later skill version is invalid."
+  },
+  "review": {
+    "plain": "no skill, Agent and Workflow disabled",
+    "skill": "skills/stacked-pr-feedback/SKILL.md local review mode, Agent allowed",
+    "notes": "Every finding was read. Unmatched real findings were labeled true: an unplanted \\d Unicode-digit defect in layer 1 (4 runs) and missing build_invoice test coverage in layer 5 (2 findings). Pattern matches were audited and overridden where wrong: plain-2's negative-coupon finding (misreads layer 3) credits no plant and is not real; plain-1 and plain-3 reported the notes.txt edit on layer 5, which is real but credits no plant.",
+    "runs": [
+      {
+        "run": "plain-1",
+        "arm": "plain",
+        "plants": {
+          "half-even-rounding": true,
+          "coupon-cap-wrong-layer": false,
+          "scope-leak": false,
+          "grouping-regression": true
+        },
+        "recall": 0.5,
+        "findings": 3,
+        "true_positives": 3,
+        "false_positives": 0,
+        "precision": 1.0,
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.0682398,
+        "minutes": 0.6,
+        "labels": {
+          "2": {
+            "plants": [],
+            "real": true
+          }
+        }
+      },
+      {
+        "run": "plain-2",
+        "arm": "plain",
+        "plants": {
+          "half-even-rounding": true,
+          "coupon-cap-wrong-layer": false,
+          "scope-leak": true,
+          "grouping-regression": true
+        },
+        "recall": 0.75,
+        "findings": 5,
+        "true_positives": 4,
+        "false_positives": 1,
+        "precision": 0.8,
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.0715565,
+        "minutes": 0.5,
+        "labels": {
+          "2": true,
+          "3": {
+            "plants": [],
+            "real": false
+          }
+        }
+      },
+      {
+        "run": "plain-3",
+        "arm": "plain",
+        "plants": {
+          "half-even-rounding": true,
+          "coupon-cap-wrong-layer": false,
+          "scope-leak": false,
+          "grouping-regression": true
+        },
+        "recall": 0.5,
+        "findings": 4,
+        "true_positives": 4,
+        "false_positives": 0,
+        "precision": 1.0,
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.0687512,
+        "minutes": 0.7,
+        "labels": {
+          "3": true,
+          "2": {
+            "plants": [],
+            "real": true
+          }
+        }
+      },
+      {
+        "run": "skill-1",
+        "arm": "skill",
+        "plants": {
+          "half-even-rounding": true,
+          "coupon-cap-wrong-layer": true,
+          "scope-leak": true,
+          "grouping-regression": true
+        },
+        "recall": 1.0,
+        "findings": 7,
+        "true_positives": 7,
+        "false_positives": 0,
+        "precision": 1.0,
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.11376220000000001,
+        "minutes": 0.9,
+        "labels": {
+          "6": true
+        }
+      },
+      {
+        "run": "skill-2",
+        "arm": "skill",
+        "plants": {
+          "half-even-rounding": true,
+          "coupon-cap-wrong-layer": true,
+          "scope-leak": true,
+          "grouping-regression": true
+        },
+        "recall": 1.0,
+        "findings": 6,
+        "true_positives": 6,
+        "false_positives": 0,
+        "precision": 1.0,
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.12487410000000002,
+        "minutes": 1.0,
+        "labels": {
+          "2": true,
+          "5": true
+        }
+      },
+      {
+        "run": "skill-3",
+        "arm": "skill",
+        "plants": {
+          "half-even-rounding": true,
+          "coupon-cap-wrong-layer": true,
+          "scope-leak": true,
+          "grouping-regression": true
+        },
+        "recall": 1.0,
+        "findings": 5,
+        "true_positives": 5,
+        "false_positives": 0,
+        "precision": 1.0,
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1578198,
+        "minutes": 0.9,
+        "labels": {
+          "3": true
+        }
+      }
+    ]
+  },
+  "apply_preserved_behavior": {
+    "case": "loans",
+    "skill": "skills/openspec-stack-apply/SKILL.md with group 1 owning preserved behavior (commit 747259e); compare with apply.runs single arm",
+    "notes": "Transcripts show these runs working group by group (implement, check, commit) in 11-17 tool calls; the earlier skill runs mostly used 4-13 bulk calls. Whether the skill change caused the shift is not established at n=4.",
+    "runs": [
+      {
+        "run": "skill-1",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.2759344,
+        "minutes": 1.7,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "b70dd392-a11f-4f06-8f67-cd5a66cc5520",
+          "num_turns": 14,
+          "usage": {
+            "input_tokens": 26,
+            "cache_creation_input_tokens": 31235,
+            "cache_read_input_tokens": 383424,
+            "output_tokens": 11260
+          },
+          "workload": "fresh implementation"
+        }
+      },
+      {
+        "run": "skill-2",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [
+          "test_loans.DueDateTests.test_unknown_kind"
+        ],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.30146259999999997,
+        "minutes": 2.3,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "9431f3de-0df5-4df9-a5f6-f80e5cc214f4",
+          "num_turns": 17,
+          "usage": {
+            "input_tokens": 30,
+            "cache_creation_input_tokens": 33425,
+            "cache_read_input_tokens": 476526,
+            "output_tokens": 12005
+          },
+          "workload": "fresh implementation"
+        }
+      },
+      {
+        "run": "skill-3",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [
+          "test_loans.DueDateTest.test_unknown_kind"
+        ],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.3034823,
+        "minutes": 1.5,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "ddbee172-447e-4c8b-9a17-04ea01afbb77",
+          "num_turns": 15,
+          "usage": {
+            "input_tokens": 26,
+            "cache_creation_input_tokens": 33384,
+            "cache_read_input_tokens": 410943,
+            "output_tokens": 12880
+          },
+          "workload": "fresh implementation"
+        }
+      },
+      {
+        "run": "skill-4",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.27559600000000006,
+        "minutes": 1.6,
+        "spec_valid": true,
+        "measurement": {
+          "session_id": "38ae8313-04a4-4822-a2b3-27d76c62b425",
+          "num_turns": 13,
+          "usage": {
+            "input_tokens": 22,
+            "cache_creation_input_tokens": 31020,
+            "cache_read_input_tokens": 320120,
+            "output_tokens": 11946
+          },
+          "workload": "fresh implementation"
+        }
+      }
+    ],
+    "measurement_caveat": "These sessions implement the change from scratch. Compare their cost/time to the fresh single baseline, not the earlier skill verification sessions."
+  },
+  "review_loans": {
+    "stack": "loans",
+    "notes": "Every finding was read. Unmatched findings are real: staff confirmation checked without evidence (3 skill runs) and missing renewal test cases (2 skill runs). skill-1 finding 1 concerns holiday test coverage, not the design-reuse plant: its plant credit is removed while retaining it as a real test gap. Other test findings explicitly describe their credited defects. Recall and precision are unchanged. Findings are retained in findings_detail for audit.",
+    "runs": [
+      {
+        "run": "plain-1",
+        "arm": "plain",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": false,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 0.8,
+        "findings": 4,
+        "true_positives": 4,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "exception-type"
+          ],
+          "2": [
+            "signature-mismatch"
+          ],
+          "3": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1067458,
+        "minutes": 0.6,
+        "labels": {},
+        "findings_detail": [
+          {
+            "branch": "loan-desk/2-overdue-days",
+            "path": "loans.py",
+            "line": 37,
+            "body": "days_overdue restates the Sunday/holiday rule inline instead of calling is_open, violating the design decision that every function decides openness via is_open. Replace with `if is_open(day)`."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 52,
+            "body": "RenewalError subclasses Exception, not ValueError, but the spec requires renew to raise ValueError for overdue loans, exhausted renewals (and, in the holds group, held items). Callers catching ValueError will miss it. Raise ValueError or subclass it."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "loans.py",
+            "line": 67,
+            "body": "place_hold has its parameters reversed: spec is place_hold(holds, patron). place_hold(('ana',), 'bo') would test `holds in patron`/iterate the wrong thing and fail instead of returning ('ana','bo')."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "loans.py",
+            "line": 76,
+            "body": "receipt filters out loans with a zero fine, so overdue_items undercounts: spec says overdue_items is the number of loans due before today, regardless of fine (e.g. a book one open day overdue has a 0 fine but is still counted). Count all loans with due < today and sum fines."
+          }
+        ]
+      },
+      {
+        "run": "plain-2",
+        "arm": "plain",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 5,
+        "true_positives": 5,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "spec-tampering"
+          ],
+          "2": [
+            "exception-type"
+          ],
+          "3": [
+            "signature-mismatch"
+          ],
+          "4": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1233929,
+        "minutes": 0.6,
+        "labels": {},
+        "findings_detail": [
+          {
+            "branch": "loan-desk/2-overdue-days",
+            "path": "loans.py",
+            "line": 37,
+            "body": "days_overdue restates the Sunday/holiday rule inline instead of calling is_open, violating the design decision that every function decides openness via is_open (a later change to is_open would silently diverge)."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 8,
+            "body": "MAX_RENEWALS = 3, but the spec on main says a loan cannot be renewed once it has been renewed twice. The branch also edited the spec text to 'three times', which hides the divergence. Should be 2, and the spec edit reverted."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 52,
+            "body": "RenewalError derives from Exception, not ValueError. The spec requires renew to raise ValueError for overdue or exhausted renewals (and for held items), so `except ValueError` or assertRaises(ValueError) will not catch it."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "loans.py",
+            "line": 67,
+            "body": "place_hold takes (patron, holds), but the spec signature is place_hold(holds, patron). The spec scenario place_hold((\"ana\",), \"bo\") would fail: the string \"bo\" is searched as a container and the tuple is unpacked wrongly."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "loans.py",
+            "line": 76,
+            "body": "receipt counts only loans with fine > 0, but the spec says overdue_items is the number of loans due before today. A book one open day late (fine 0 because the first day is free) or a loan whose overdue days are all closed days is dropped from the count. Count every loan with due < today and sum their fines."
+          }
+        ]
+      },
+      {
+        "run": "plain-3",
+        "arm": "plain",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 5,
+        "true_positives": 5,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "spec-tampering"
+          ],
+          "2": [
+            "exception-type"
+          ],
+          "3": [
+            "signature-mismatch"
+          ],
+          "4": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.11632790000000001,
+        "minutes": 0.4,
+        "labels": {},
+        "findings_detail": [
+          {
+            "branch": "loan-desk/2-overdue-days",
+            "path": "loans.py",
+            "line": 37,
+            "body": "days_overdue restates the Sunday/holiday rule inline (weekday() != 6 and day not in HOLIDAYS) instead of calling is_open, violating the design decision that every function decides openness via is_open."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 8,
+            "body": "MAX_RENEWALS = 3 contradicts the spec on main, which says a loan that has already been renewed twice SHALL NOT be renewed (limit is 2). The branch also edited the spec from 'twice' to 'three times' to match; a third renewal is wrongly allowed."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 52,
+            "body": "RenewalError subclasses Exception, not ValueError, but the spec requires renew to raise ValueError for overdue or exhausted renewals (and, with holds, for held items). Callers catching ValueError will miss it; it should subclass ValueError or ValueError should be raised directly."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "loans.py",
+            "line": 67,
+            "body": "place_hold has its parameters reversed: signature is place_hold(patron, holds) but spec is place_hold(holds, patron). place_hold((\"ana\",), \"bo\") checks whether the tuple is in a string and raises TypeError instead of returning (\"ana\", \"bo\")."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "loans.py",
+            "line": 76,
+            "body": "receipt filters out loans whose fine is 0 before counting, so overdue_items only counts fined loans. Spec says overdue_items is the number of loans due before today; e.g. a book one open day overdue (fine 0) or a loan overdue only across closed days is omitted from the count."
+          }
+        ]
+      },
+      {
+        "run": "skill-1",
+        "arm": "skill",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 11,
+        "true_positives": 11,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "2": [
+            "spec-tampering"
+          ],
+          "3": [
+            "exception-type"
+          ],
+          "4": [
+            "spec-tampering"
+          ],
+          "5": [
+            "spec-tampering"
+          ],
+          "6": [
+            "signature-mismatch"
+          ],
+          "7": [
+            "signature-mismatch"
+          ],
+          "8": [
+            "silent-spec-change"
+          ],
+          "9": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.18110320000000002,
+        "minutes": 0.8,
+        "labels": {
+          "10": true,
+          "1": {
+            "plants": [],
+            "real": true
+          }
+        },
+        "findings_detail": [
+          {
+            "branch": "loan-desk/2-overdue-days",
+            "path": "loans.py",
+            "line": 37,
+            "body": "days_overdue restates the Sunday/holiday rule (`weekday() != 6 and day not in HOLIDAYS`) instead of calling `is_open`, violating the design decision that every function uses `is_open`. Editing `is_open` would silently diverge. Use `is_open(day)`."
+          },
+          {
+            "branch": "loan-desk/2-overdue-days",
+            "path": "test_loans.py",
+            "line": 29,
+            "body": "Overdue tests only exercise Sundays (11-28 to 11-30). No test crosses a HOLIDAYS date (e.g. due 2026-12-24, returned 2026-12-28 should be 1), so a Sunday-only implementation passes; also no returned==due case."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 8,
+            "body": "MAX_RENEWALS = 3 contradicts the spec ('already been renewed twice'): a loan with 2 renewals is renewed a third time. The branch edited spec.md to say 'three times' to match the code instead of fixing the code; that spec change is out of scope and unapproved. Set to 2 and revert the spec edit."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 52,
+            "body": "RenewalError subclasses Exception, but the spec requires `ValueError` for refused renewals; callers catching ValueError will miss it. Make it subclass ValueError (or raise ValueError)."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "test_loans.py",
+            "line": 54,
+            "body": "Spec scenario renews on the due date (2026-11-23), but the test renews on 11-20, so a `today >= due` shortcut passes. Test also never covers renewals=2 (must be refused) / renewals=1 allowed, so the 'twice' limit and the 3-vs-2 bug go undetected (refusal test uses renewals=3), nor a DVD or Sunday/holiday-adjusted renewal date."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "openspec/changes/loan-desk/specs/loan-desk/spec.md",
+            "line": 37,
+            "body": "Branch modified the acceptance criteria ('twice' -> 'three times') to fit the implementation; acceptance criteria must not change here without a spec-change approval."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "loans.py",
+            "line": 67,
+            "body": "place_hold takes (patron, holds) but the spec defines `place_hold(holds, patron)`. Called per spec, `place_hold(('ana',), 'bo')` returns the wrong value instead of ('ana', 'bo'). Swap the parameters."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "test_loans.py",
+            "line": 71,
+            "body": "Hold tests call place_hold with the swapped (patron, holds) order, enshrining the signature deviation; tests should use spec order `place_hold(('ana',), 'bo')`."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "loans.py",
+            "line": 76,
+            "body": "receipt counts only loans whose fine is > 0, but spec says overdue_items is the number of loans due before `today`. A book one open day late (fine 0), or any loan due before today where no open day elapsed (due Saturday, today Sunday) is omitted. Count every loan with due < today; sum the fines."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "test_loans.py",
+            "line": 89,
+            "body": "The 'nothing due' test asserts a book due 11-24 on 11-25 gives overdue_items 0, but that loan is due before today and must count as 1 (total 0). The test enshrines the bug; the spec's 'Nothing overdue' scenario is only the empty list."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "openspec/changes/loan-desk/tasks.md",
+            "line": 31,
+            "body": "Task 6.3 (confirm with circulation staff that totals match the printed overdue notice) is ticked but is a human confirmation with no evidence; it cannot have been done by the code change. Leave unchecked."
+          }
+        ]
+      },
+      {
+        "run": "skill-2",
+        "arm": "skill",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 8,
+        "true_positives": 8,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "exception-type"
+          ],
+          "2": [
+            "spec-tampering"
+          ],
+          "3": [
+            "spec-tampering"
+          ],
+          "5": [
+            "signature-mismatch"
+          ],
+          "6": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1610861,
+        "minutes": 0.7,
+        "labels": {
+          "4": true,
+          "7": true
+        },
+        "findings_detail": [
+          {
+            "branch": "loan-desk/2-overdue-days",
+            "path": "loans.py",
+            "line": 37,
+            "body": "days_overdue restates the Sunday/holiday rule (`day.weekday() != 6 and day not in HOLIDAYS`) instead of calling `is_open`, violating the design decision that every function decides openness via `is_open`. Behavior diverges if `is_open` changes. Tests do not distinguish this from calling `is_open`, so a test that monkeypatches `is_open` (or HOLIDAYS-independent rule) would go red only on the correct implementation."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 52,
+            "body": "`RenewalError` subclasses `Exception`, but the Renewals requirement says refused renewals SHALL raise `ValueError`. Callers catching `ValueError` miss it. Tests assert `loans.RenewalError`, so they pass the naive implementation and would not go red on the spec'd behavior. Make it a `ValueError` subclass (or raise ValueError) and assert ValueError."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 8,
+            "body": "`MAX_RENEWALS = 3` contradicts the spec as of main: a loan SHALL NOT be renewed when already renewed twice (limit 2). The only test uses `renewals=3`, which passes with either limit; a loan with `renewals=2` is wrongly renewed. Add a test for `renewals=2` raising."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "openspec/changes/loan-desk/specs/loan-desk/spec.md",
+            "line": 37,
+            "body": "Out of scope: this branch edits the acceptance criteria ('renewed twice' -> 'three times') to match its code. Acceptance criteria are fixed as of main; fix the code, or propose a spec-change for approval instead of editing the spec in the implementation PR."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "test_loans.py",
+            "line": 1,
+            "body": "Renewal tests do not cover the next-open-day adjustment (renewed due date landing on a Sunday/holiday), DVD period (7 days), or the 'today == due' boundary being allowed with multiple renewals; a naive `due + period` without `_next_open` passes all current tests (the only renewal result, 2026-12-14, is a Monday)."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "loans.py",
+            "line": 67,
+            "body": "`place_hold(patron, holds)` has arguments reversed relative to the spec `place_hold(holds, patron)`. A call `place_hold((\"ana\",), \"bo\")` as in the spec scenario returns a wrong value or fails; the tests were written to match the swapped signature so they cannot catch it."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "loans.py",
+            "line": 76,
+            "body": "`receipt` drops loans with a zero fine (`fine > 0`), so `overdue_items` is not the number of loans due before `today`. E.g. a book due 11/23 returned/checked 11/24 (1 overdue day, fine 0), or a loan overdue only across closed days, is not counted. Spec: count all loans due before today. Tests only use fines > 0 so the shortcut passes; add a test with a 1-day-overdue book."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "openspec/changes/loan-desk/tasks.md",
+            "line": null,
+            "body": "Task 6.3 ('Confirm with circulation staff that receipt totals match the printed overdue notice') is marked done but cannot have been verified in this branch; no evidence is recorded. Reopen it until staff confirmation exists."
+          }
+        ]
+      },
+      {
+        "run": "skill-3",
+        "arm": "skill",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 8,
+        "true_positives": 8,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "exception-type"
+          ],
+          "2": [
+            "spec-tampering"
+          ],
+          "4": [
+            "signature-mismatch"
+          ],
+          "5": [
+            "signature-mismatch"
+          ],
+          "6": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1938301,
+        "minutes": 0.9,
+        "labels": {
+          "3": true,
+          "7": true
+        },
+        "findings_detail": [
+          {
+            "branch": "loan-desk/2-overdue-days",
+            "path": "loans.py",
+            "line": 37,
+            "body": "days_overdue restates the Sunday/holiday rule (`day.weekday() != 6 and day not in HOLIDAYS`) instead of calling `is_open`. design.md requires every function to decide openness through `is_open`. The existing test only uses Sundays, so it would not catch a drift if `is_open` gains new closure rules. Expected: `if is_open(day):`."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 52,
+            "body": "RenewalError subclasses Exception, not ValueError. The spec says an overdue or exhausted renewal SHALL raise `ValueError`, so `assertRaises(ValueError)` or `except ValueError` callers will miss it. The tests assert RenewalError, so they pass whatever the spec says. Expected: `class RenewalError(ValueError)`, or raise ValueError directly. The same problem carries into the hold-blocked renewal added on loan-desk/5-holds."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "loans.py",
+            "line": 8,
+            "body": "MAX_RENEWALS = 3 contradicts the spec on main (a loan SHALL NOT be renewed once it has already been renewed twice, so the limit is 2). This branch also edited the spec in openspec/changes/loan-desk/specs/loan-desk/spec.md from 'twice' to 'three times' to match the code, with no proposal or approval. That is a spec change that should be raised separately, not slipped into an implementation PR. The only test uses renewals=3, so it cannot tell a limit of 2 from a limit of 3. A renewals=2 case that must raise would catch it. Expected: MAX_RENEWALS = 2 and the spec text restored."
+          },
+          {
+            "branch": "loan-desk/4-renewals",
+            "path": "test_loans.py",
+            "line": 56,
+            "body": "The renewal tests miss spec-relevant cases. Nothing renews a loan whose extended due date lands on a closed day, so a naive `due + period` without `_next_open` would pass. The spec's 'renew on the due date' scenario (today == due) is not tested for the renewal itself; the test renews three days early. The DVD period is not covered. The renewals boundary is only tested at 3."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "loans.py",
+            "line": 67,
+            "body": "place_hold takes (patron, holds), but the spec defines `place_hold(holds, patron)`. A caller following the spec, such as `place_hold((\"ana\",), \"bo\")`, will test `\"ana\" in \"bo\"`-style membership against the wrong object, or crash on `(*\"bo\", ...)`. The tests use the reversed order, so they hide the mismatch. Expected: `def place_hold(holds, patron)`, and the tests should follow the spec's scenario."
+          },
+          {
+            "branch": "loan-desk/5-holds",
+            "path": "test_loans.py",
+            "line": 69,
+            "body": "The hold tests do not verify that earlier renewal rules still apply once `holds` is passed (design: every earlier rule continues to apply). No test combines an overdue or max-renewed loan with a harmless hold, or checks that holds=() and the borrower's own hold still allow renewal of a DVD. The place_hold tests also encode the argument order that disagrees with the spec."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "loans.py",
+            "line": 76,
+            "body": "receipt counts overdue_items as only the loans with a fine > 0. The spec says `overdue_items` is the number of loans due before `today`. A book one open day late (fine 0), or a loan due Saturday and checked on Monday, is a loan due before today with a zero fine, and it is wrongly dropped from the count. Expected: len(fines), with total = sum(fines). The test_nothing_due case uses a loan due the day before, whose fine is 0 only because it is a book, so it asserts the wrong behaviour as correct; a 1-day-late book would show the defect."
+          },
+          {
+            "branch": "loan-desk/6-receipts",
+            "path": "openspec/changes/loan-desk/tasks.md",
+            "line": 31,
+            "body": "Task 6.3 ('Confirm with circulation staff that receipt totals match the printed overdue notice') is checked [x], but this is a human confirmation that no code or test can supply and nothing in the branch evidences it. Reopen it until staff confirm. Acceptance is also unmet on the spec points above."
+          }
+        ]
+      }
+    ]
+  }
+}

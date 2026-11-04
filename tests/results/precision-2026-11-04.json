@@ -289,7 +289,7 @@
   "review": {
     "plain": "no skill, Agent and Workflow disabled",
     "skill": "skills/stacked-pr-feedback/SKILL.md local review mode, Agent allowed",
-    "notes": "Unmatched findings were read and labeled true: an unplanted \\d Unicode-digit defect in layer 1 (4 runs) and a missing per-line rounding test in layer 5 (1 run).",
+    "notes": "Every finding was read. Unmatched real findings were labeled true: an unplanted \\d Unicode-digit defect in layer 1 (4 runs) and missing build_invoice test coverage in layer 5 (2 findings). Pattern matches were audited and overridden where wrong: plain-2's negative-coupon finding (misreads layer 3) credits no plant and is not real; plain-1 and plain-3 reported the notes.txt edit on layer 5, which is real but credits no plant.",
     "runs": [
       {
         "run": "plain-1",
@@ -308,26 +308,39 @@
         "decoy_hits": [],
         "repo_unchanged": true,
         "cost_usd": 0.0682398,
-        "minutes": 0.6
+        "minutes": 0.6,
+        "labels": {
+          "2": {
+            "plants": [],
+            "real": true
+          }
+        }
       },
       {
         "run": "plain-2",
         "arm": "plain",
         "plants": {
           "half-even-rounding": true,
-          "coupon-cap-wrong-layer": true,
+          "coupon-cap-wrong-layer": false,
           "scope-leak": true,
           "grouping-regression": true
         },
-        "recall": 1.0,
+        "recall": 0.75,
         "findings": 5,
-        "true_positives": 5,
-        "false_positives": 0,
-        "precision": 1.0,
+        "true_positives": 4,
+        "false_positives": 1,
+        "precision": 0.8,
         "decoy_hits": [],
         "repo_unchanged": true,
         "cost_usd": 0.0715565,
-        "minutes": 0.5
+        "minutes": 0.5,
+        "labels": {
+          "2": true,
+          "3": {
+            "plants": [],
+            "real": false
+          }
+        }
       },
       {
         "run": "plain-3",
@@ -346,7 +359,14 @@
         "decoy_hits": [],
         "repo_unchanged": true,
         "cost_usd": 0.0687512,
-        "minutes": 0.7
+        "minutes": 0.7,
+        "labels": {
+          "3": true,
+          "2": {
+            "plants": [],
+            "real": true
+          }
+        }
       },
       {
         "run": "skill-1",
@@ -365,7 +385,10 @@
         "decoy_hits": [],
         "repo_unchanged": true,
         "cost_usd": 0.11376220000000001,
-        "minutes": 0.9
+        "minutes": 0.9,
+        "labels": {
+          "6": true
+        }
       },
       {
         "run": "skill-2",
@@ -384,7 +407,11 @@
         "decoy_hits": [],
         "repo_unchanged": true,
         "cost_usd": 0.12487410000000002,
-        "minutes": 1.0
+        "minutes": 1.0,
+        "labels": {
+          "2": true,
+          "5": true
+        }
       },
       {
         "run": "skill-3",
@@ -403,7 +430,10 @@
         "decoy_hits": [],
         "repo_unchanged": true,
         "cost_usd": 0.1578198,
-        "minutes": 0.9
+        "minutes": 0.9,
+        "labels": {
+          "3": true
+        }
       }
     ]
   }

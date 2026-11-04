@@ -37,7 +37,9 @@ Before the first group (and again on resume), read the proposal, design, and
 specs once and write the criteria map in your working notes: one numbered line
 per rule (`C1`, `C2`, ...), drawn from scenarios, spec prose, design decisions,
 and proposal constraints such as existing APIs that must keep working. Tag each
-with the group that owns it. Mark `cross` the rules that span groups: a later
+with the group that owns it. Group 1 owns preserved behavior: existing APIs,
+constants, and formats the proposal or design keeps unchanged, so its tests pin
+them before any code changes. Mark `cross` the rules that span groups: a later
 group extending earlier behavior, or an ordering between steps. The map is done
 when every rule in those artifacts has a line, not only the scenarios.
 

@@ -237,8 +237,14 @@ measures.
 ## Measuring review precision
 
 `review_bench.py` measures a stack review on its own, with no remote or PRs.
-It builds the `invoice-totals` change as five local branches whose own tests all
-pass, with four planted defects and two decoys:
+It builds a comparison case's change as local branches whose own tests all
+pass, with planted defects and decoys (correct code that looks suspicious).
+Pick a stack with `--stack`.
+
+### `invoice`: the skill's own questions
+
+Five `invoice-totals` layers. The plants are the defects the review skill's
+three questions target.
 
 | Plant | Layer | Defect |
 | --- | --- | --- |
@@ -248,11 +254,36 @@ pass, with four planted defects and two decoys:
 | `grouping-regression` | 5 | Stripping every comma accepts `"1,23"` |
 | Decoys | 3, 4 | Integer `(x + 50) // 100` half-up rounding, which is correct |
 
-The layers live in [`fixtures/review/layers/`](fixtures/review/layers/).
+Layer 1's `\d` also matches non-ASCII digits. That defect was not planted, but
+it is real; label findings about it `true`. It is kept so later runs stay
+comparable with the recorded ones. The layers live in
+[`fixtures/review/layers/`](fixtures/review/layers/).
+
+### `loans`: held out
+
+Six `loan-desk` layers in the held-out domain. The plants are design and spec
+fit, outside the skill's three questions. Each layer's tests are written to
+match its code, so tests cannot reveal any of them.
+
+| Plant | Layer | Defect |
+| --- | --- | --- |
+| `design-reuse` | 2 | `days_overdue` restates the closed-day rule the design says to take from `is_open`; behavior is unchanged |
+| `exception-type` | 4 | Refused renewals raise a custom `RenewalError`, not the `ValueError` the spec requires |
+| `spec-tampering` | 4 | Three renewals allowed, with the layer editing `spec.md` to match |
+| `signature-mismatch` | 5 | `place_hold(patron, holds)` instead of `place_hold(holds, patron)` |
+| `silent-spec-change` | 6 | `overdue_items` skips overdue loans that owe no fine |
+| Decoys | 1 | An exact `type(...) is not date` check, and a loop to the next open day; both correct |
+
+Requests for this stack tell reviewers to judge against the spec as of `main`,
+because layer 4 edits it. The layers live in
+[`fixtures/review-loans/layers/`](fixtures/review-loans/layers/), mirroring
+repository paths.
+
+### Running it
 
 ```sh
-python3 tests/review_bench.py prepare plain --directory /tmp/rev/plain-1 --model '<model>'
-python3 tests/review_bench.py prepare skill --directory /tmp/rev/skill-1 --model '<model>' \
+python3 tests/review_bench.py prepare plain --stack loans --directory /tmp/rev/plain-1 --model '<model>'
+python3 tests/review_bench.py prepare skill --stack loans --directory /tmp/rev/skill-1 --model '<model>' \
   --skill skills/stacked-pr-feedback/SKILL.md
 ```
 
@@ -267,41 +298,42 @@ python3 tests/review_bench.py report /tmp/rev/*
 A finding counts toward a plant when it names one of the plant's layers and its
 path or body matches the plant's pattern; one finding may count toward several
 plants. Recall is the share of plants found. Precision is true findings over
-all findings. Findings that hit a decoy are false positives. So are unmatched
-findings, unless `labels.json` in the run directory marks their index `true`
-after you read them, for example `{"6": true}`. `repo_unchanged` checks that
-the reviewer moved no branch, left the top branch checked out, and edited
-nothing.
+all findings. Findings that hit a decoy are false positives, and so are
+unmatched findings unless labeled. `repo_unchanged` checks that the reviewer
+moved no branch, left the top branch checked out, and edited nothing.
 
-Pattern matching is approximate. Read `unmatched` in each `score.json` before
-trusting a precision figure, and label any real defect the plants missed.
-Layer 1's `\d` also matches non-ASCII digits. That defect was not planted,
-but it is real; label findings about it `true`. It is kept so later runs stay
-comparable with the recorded ones.
+Pattern matching is approximate in both directions. Read every finding before
+trusting a figure: `unmatched` lists findings no pattern caught, and `matched`
+maps each credited finding's index to its plants. Record verdicts in
+`labels.json` in the run directory, keyed by finding index: `true` or `false`
+for an unmatched finding, or `{"plants": [...], "real": true}` to replace a
+wrong pattern match.
 
-### Recorded result (2026-11-04)
+### Recorded result (2026-11-04, `invoice`)
 
 Three headless runs per arm, Sonnet 5.5 at medium effort. The skill arm ran
 this branch's `stacked-pr-feedback` in local review mode with subagents
-allowed. Every unmatched finding was read; all were real (the `\d` defect, or
-layer 5's missing per-line rounding test) and labeled `true`.
+allowed. Every finding was read and labeled where the patterns were wrong
+(see `labels` in the results file). One plain finding had been credited with
+the coupon cap; it was about negative coupons and misread layer 3. All other
+unplanted findings were real: the `\d` defect, missing `build_invoice` test
+coverage, and the `notes.txt` edit reported on the wrong layer.
 
 | | Plain | Skill |
 | --- | --- | --- |
 | `half-even-rounding` | 3/3 | 3/3 |
-| `coupon-cap-wrong-layer` | 1/3 | 3/3 |
+| `coupon-cap-wrong-layer` | 0/3 | 3/3 |
 | `scope-leak` | 1/3 | 3/3 |
 | `grouping-regression` | 3/3 | 3/3 |
-| Mean recall | 0.67 | 1.0 |
-| Mean precision | 1.0 | 1.0 |
+| Mean recall | 0.58 | 1.0 |
+| Mean precision | 0.93 | 1.0 |
 | Decoy hits | 0/3 | 0/3 |
 | Mean cost | $0.07 | $0.13 |
 | Mean wall-clock | 0.6 min | 0.9 min |
 
 The skill found every plant in every run with no false positives, at about
-twice the cost. Plain review missed the wrong-layer fix and the scope leak in
-two of three runs. Those are the defects the skill's ownership and scope
-questions target, and the plants were designed from those questions, so this
-shows the skill does what it says rather than that it generalizes. Three runs
-per arm is too few for significance (pooled over the two plants, 6/6 against
-2/6).
+twice the cost. Plain review never located the wrong-layer fix and missed the
+scope leak in two of three runs. Pooled over those two plants, that is 6/6
+against 1/6 (two-sided Fisher exact p ≈ 0.015). The plants were designed from
+the skill's questions, so this shows the skill does what it says; the `loans`
+stack tests whether it generalizes.

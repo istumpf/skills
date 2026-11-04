@@ -19,6 +19,9 @@ branch and split it afterwards. Do not delegate implementation to subagents.
    checks. If apply is blocked, report the prerequisite and stop.
 3. Check tools: `gh auth status`, `gh stack --version` (else ask the user to run
    `gh extension install github/gh-stack`), and `git config rerere.enabled true`.
+   Require `gh` with `headRefOid` support for the feedback collector: run
+   `gh pr view --json headRefOid` on an existing PR. If it reports an unknown
+   field, stop and ask the user to upgrade `gh`; do not use an API fallback.
    With several remotes, pass `--remote <name>` or ensure `remote.pushDefault`.
 4. Require a clean working tree. Never stash, reset, or discard user changes to
    get one; ask instead.
@@ -28,6 +31,24 @@ branch and split it afterwards. Do not delegate implementation to subagents.
 
 Each top-level task section is one group, in written order. Skip fully checked
 groups. Name branches `<change>/<n>-<group-slug>`.
+
+## Completion gate
+
+Before implementing a group, map each task's acceptance criteria from tasks,
+spec, and design to a verification method. Keep compact references and results
+in the existing task file or acceptance ledger: criterion, command or evidence
+link, result, revision, and relevant environment. Reuse evidence rather than
+copying specs or logs. Record missing evidence and blockers explicitly.
+
+Check a task only when every applicable criterion has supporting evidence.
+Passing repository checks proves only what those checks exercise. Tasks requiring
+publication, CI, measurements, or independent review stay unchecked until that
+evidence exists; proceed to later groups when their prerequisites permit it.
+On resume, verify evidence for checked tasks before skipping their groups.
+
+After fixes, rebases, or dependency changes, rerun affected checks and explain
+any evidence retained. Code checks may remain valid after evidence-only edits;
+requirements for CI on the final published head need results for that exact SHA.
 
 ## Group loop
 
@@ -42,9 +63,9 @@ For each pending group:
    edge cases stated in the spec and design prose, not only the scenarios. Use
    a `tdd` skill when one is available.
 3. Run the required checks for the whole stack so far. Fix failures here.
-4. Mark the group's tasks `- [x]` in the tasks file (when it is in this
-   repository) and commit them with the code, following repository commit
-   conventions.
+4. Apply the completion gate and mark only proven tasks `- [x]` in the tasks
+   file (when it is in this repository). Commit with the code, following
+   repository commit conventions.
 
 If a later group exposes a defect in an earlier layer, fix it on the layer that
 owns it: `gh stack checkout <branch>`, commit, `gh stack rebase --upstack`,
@@ -64,8 +85,21 @@ spec; suggest an artifact edit instead of guessing.
    rename each PR with `gh pr edit` to the group name and a summary, noting it
    depends on the PR below.
 3. Run the `stacked-pr-feedback` skill in review mode on the stack, following
-   its default approval flow. If it is not installed, say so and skip.
-4. When the user approves, mark the PRs ready with `gh stack submit --auto --open`.
+   its default approval flow. This focused precision pass supplements independent
+   review after push by the user's or repository's designated reviewers (for
+   example, Codacy and a separate agent). If the skill is not installed, report
+   the local pass skipped. Record independent review results and reviewed
+   revisions separately; pending results remain an explicit handoff, with review
+   tasks unchecked. Local review does not satisfy this gate.
+4. After review fixes and restacking, reconcile every task and checked marker
+   against current evidence, required checks, and outstanding findings. Correct
+   unsupported checkmarks and record deferred task completion on its owning
+   layer. Repeat affected verification after restacking. Keep implementation,
+   audit results, and external scanner or CI status separate.
+5. Request readiness approval only when required checks and independent review
+   after push are complete for the current stack and blocking findings are
+   addressed. When the user
+   approves, mark the PRs ready with `gh stack submit --auto --open`.
 
 ## Report
 
@@ -73,3 +107,6 @@ List PRs bottom to top with branches, checks run, review outcome, and anything
 left open. Leave the top branch checked out. Do not merge PRs or archive the
 change; the request to apply with stacked PRs authorizes branches, commits,
 pushes, and draft PRs, nothing more.
+Distinguish draft stack delivered, acceptance complete, and ready for approval.
+For incomplete acceptance, name the unmet criteria and blockers; publishing
+drafts or finishing the session does not make the change complete.

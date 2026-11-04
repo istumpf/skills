@@ -14,6 +14,10 @@ change's spec and proposes spec edits instead of silently changing required
 behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) runs it in
 review mode after publishing.
 
+Your `gh` must support `gh pr view --json headRefOid`. If the field is
+unavailable, upgrade using the [official installation instructions](https://github.com/cli/cli#installation).
+The skill checks this before collecting; it does not use an API fallback.
+
 ## Usage
 
 From a checkout of the repository, on any branch in the stack:

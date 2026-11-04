@@ -15,6 +15,10 @@ Branch moves, restacking, pushing, and merge sync go through `gh stack`
 `gh stack view --json` exits 2 (no local stack), adopt the PR branches bottom to
 top with `gh stack init --base <trunk> <branch-1> <branch-2> ...`.
 
+Require `gh` with `headRefOid` support: run `gh pr view <pr> --json headRefOid`
+before collecting. If it reports an unknown field, stop and ask the user to
+upgrade `gh`; do not use an API fallback.
+
 ## Modes
 
 - **Default (ask first):** collect, triage, show the plan, and wait for approval
@@ -23,15 +27,33 @@ top with `gh stack init --base <trunk> <branch-1> <branch-2> ...`.
   without asking. Disagreements, questions, spec conflicts, and rebase
   conflicts still wait for the user.
 - **Local review:** only when the user asks for a review. Before collecting,
-  start one read-only reviewer subagent per PR in parallel. Give each its PR's
-  diff against its base (`git diff <base>...<head>`), the files it touches,
-  and, for OpenSpec, the matching task group and spec scenarios. Each returns a
-  JSON list of findings `{"pr", "path", "line", "body"}` with expected behavior.
+  start one read-only reviewer subagent per PR in parallel. This is a focused
+  precision pass: check spec fit, test claims, and completion claims. Give each
+  only its PR/base/head identifiers, diff and touched-file references, applicable
+  agent instructions, and matching acceptance criteria. Add a short verification
+  summary or decision only when it affects that PR's review. Reviewers may read
+  more source as needed; omit session history, full logs, unrelated specs, and
+  other layers' context. Each returns a compact JSON object with
+  `findings` (items with `pr`, `path`, `line`, `body`, and expected behavior),
+  `checked` (scope inspected), `executed` (commands, results, revisions), and
+  `not_verified` (coverage limits). For changed tests, assess what claim each
+  proves and what incorrect behavior would make it fail.
   Reviewers share the checkout, so they must not run any command that moves
   `HEAD` or edits files: read with `git show <head>:<path>` and `git diff`, and
   run tests only in their own `git worktree add --detach <tmp-dir> <head>`,
   removed afterwards.
-  Save them to a scratch file and pass it with `--local`. Never post them.
+  Save only the combined findings list to a scratch file for `--local`; retain
+  coverage for the final report. Never post local findings. An empty static
+  review means no findings in the inspected scope, with runtime unverified.
+  For runtime-sensitive changes (dependencies, runner or build configuration),
+  the orchestrator remains responsible for executable verification; reviewers
+  need not duplicate it. Static review does not satisfy those checks.
+
+Local review supplements independent review of the pushed stack (for example,
+Codacy and a separate agent). Track the user's or repository's designated
+reviewers and their results at the reviewed revisions. A local pass or an empty
+feedback queue does not complete that independent review. If results are still
+pending, report the handoff and leave its acceptance criteria unchecked.
 
 ## 1. Collect
 
@@ -90,10 +112,14 @@ For each owner PR from the bottom of the stack upward:
 Then `gh stack top` and `gh stack push`. Never push commits you have not
 inspected.
 
-For OpenSpec, a review fix does not reopen tasks. Uncheck a task only when its
-acceptance criteria are no longer met, and run
+For OpenSpec, reopen tasks whose acceptance criteria are unmet or unverified,
+rather than reopening tasks merely because review changed their code. Run
 `openspec validate <change> --type change --strict --no-interactive` after
-editing artifacts.
+editing artifacts. Correct checkmarks with missing or stale evidence.
+Record criterion references, results, revisions, and relevant
+environment in the existing task file or ledger. Reassess evidence after fixes
+and restacking; rerun affected checks. CI required on the final published head
+must match that SHA; evidence-only edits need not invalidate code checks.
 
 ## 4. Reply
 
@@ -120,5 +146,10 @@ in step 3.
 ## Finish
 
 Report per PR: items fixed (with commits), replies posted, items awaiting the
-user, restacked branches, checks run, and anything left unhandled. Never report
-the queue clear while actionable items remain. Do not merge PRs.
+user, restacked branches, checks run, review coverage and limits, and anything
+left unhandled. Reconcile fixes, required checks, and acceptance evidence at
+the final revisions before claiming completion. Report feedback handled,
+acceptance satisfied, and readiness separately: a marker reply or empty review
+does not prove acceptance. Include independent review status after push.
+Name unmet criteria and blockers. Never report the
+queue clear while actionable items remain. Do not merge PRs.

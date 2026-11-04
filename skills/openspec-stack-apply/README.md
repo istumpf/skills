@@ -23,6 +23,8 @@ the PRs leave draft.
 - `gh` authenticated, plus `gh extension install github/gh-stack`. The
   repository must have GitHub Stacked PRs available; the skill stops and tells
   you if it does not.
+- `gh pr view --json` must support `headRefOid` for feedback collection.
+  If the field is unavailable, the skill asks you to upgrade `gh`.
 - A clean working tree.
 - Optional: [Stacked PR Feedback](../stacked-pr-feedback/README.md) for the
   review step, and a `tdd` skill, which the agent uses when present.

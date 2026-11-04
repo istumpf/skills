@@ -11,6 +11,7 @@ REFERENCE = compare.HERE / "reference"
 SKILL = compare.HERE.parent / "skills/openspec-stack-apply/SKILL.md"
 # One scenario per case, standing in for the agent's tests.
 SMOKE = {
+    "warehouse": "import warehouse\nCALL = warehouse.new_state\nEXPECTED = {'stock': {}, 'orders': {}, 'events': {}}\n",
     "comparison": "import invoice\nCALL = lambda: invoice.parse_amount('7')\nEXPECTED = 700\n",
     "loans": "from datetime import date\nimport loans\n"
              "CALL = lambda: loans.due_date(date(2026, 11, 2), 'book')\nEXPECTED = date(2026, 11, 23)\n",

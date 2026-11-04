@@ -33,7 +33,7 @@ arm applies the change with no skill and no delegation. The `skill` arm applies
 it with any SKILL.md you pass. The fixtures have no Git remote, so skills that
 publish PRs are told to skip publishing.
 
-There are two cases, chosen with `--case`. Each keeps its trap list, owning
+There are three cases, chosen with `--case`. Each keeps its trap list, owning
 groups, and mutants in `hidden/<case>/case.py`.
 
 ### `comparison`: invoice totals
@@ -119,25 +119,116 @@ review skipped.
 | `ReceiptCrossGroup` killed | 0/4 | 4/4 |
 | `ExistingApi` killed | 0/4 | 1/4 |
 | Stacks with every layer clean | – | 4/4 |
-| Mean cost | $0.13 | $0.13 |
-| Mean wall-clock | 0.8 min | 0.5 min |
+| Recorded cost (different workloads) | $0.13 build | $0.13 verification only |
+| Recorded wall-clock (different workloads) | 0.8 min build | 0.5 min verification only |
 
 Both arms wrote correct code. The skill arm's tests also caught the renewal and
 receipt mistakes that every single run's tests missed. Those are the
 cross-group and scenario-shadowed rules the criteria map and the "fails on the
 naive implementation" rule target. For each of those two mutants, 4/4 against
-0/4 gives a two-sided Fisher exact p of about 0.03. Cost did not rise. Neither
-arm tested the existing API reliably.
+0/4 gives a two-sided Fisher exact p of about 0.03. The recorded skill sessions
+only verified existing implementations, so their cost and time cannot be
+compared to fresh single runs. Neither arm tested the
+existing API reliably.
 
 After the criteria map was changed so group 1 owns preserved behavior, four
 more skill runs (`apply_preserved_behavior` in the results file) killed all 11
 mutants every time, including `ExistingApi` (4/4, against 1/4 before and 0/4
-for single). Mean cost rose to $0.29 and time to 1.8 minutes. Transcripts
-show these runs working group by group, implementing, checking, and
-committing in 11–17 tool calls, where the earlier skill runs mostly batched
-the change into 4–13 bulk calls. One run caught and fixed a wrong assertion
-between groups this way. Four runs per version cannot show whether the
-one-line change caused that shift.
+for single). Fresh implementation cost averaged $0.29 and time 1.8 minutes,
+versus $0.13 and 0.8 minutes for single. The apparent increase over the earlier skill
+version is not a valid comparison: the exact sessions named by those earlier
+`result.json` files began with all six layers already implemented. They only
+read and verified existing work. Their 6–7 turns and roughly 2,026 output
+tokens per run therefore exclude implementation, whereas the new sessions'
+13–17 turns and roughly 12,023 output tokens include writing the code and
+tests. The previous explanation attributing this to batching was incorrect.
+Artifact correctness and mutant scores remain valid; determining the old
+skill's implementation cost requires its original build sessions or fresh runs.
+Session IDs and usage counters are retained in the results file.
+
+### `warehouse`: larger stateful change
+
+Ten task groups cover a warehouse ledger: normalization, idempotent receipts,
+reservations, expiry/cancellation, shipment retries, transfers, bundle expansion,
+snapshots, atomic batches, and an unresolved backorder policy. Unlike the earlier
+numeric and date helpers, operations compose over nested state and persisted
+history. The reference is roughly twice the size of the loans reference.
+
+The unresolved policy is explicit: no allocation priority has been authorized.
+Groups 1–9 are independent of that decision; group 10 must remain pending. We
+measure whether agents respect that boundary, not whether they guess an unstated
+business rule. This does not test discovering an ambiguity that the artifacts
+fail to mention.
+
+Frozen before model runs: 15 hidden traps, one mutant each, a correct reference,
+and a naive version that passes basic scenarios while failing the traps. The
+fixture, tests, and reference hashes are retained in
+[`results/warehouse-2026-11-04.json`](results/warehouse-2026-11-04.json).
+
+| Area | Hidden checks |
+| --- | --- |
+| Existing contract and validation | Existing API, bool quantity rejection, canonical duplicate items |
+| Receipts and reservations | Replay, conflicting event reuse, expiry boundary releasing capacity |
+| Lifecycle and transfers | Detached nested state, terminal order id reuse, shipment retry, reserved stock excluded from transfers |
+| Extensions and persistence | Shared bundle components, snapshot history, invalid snapshot stock |
+| Composition | Batch rollback, receipt replay within ordered reserve/ship batch |
+
+Plan: three fresh runs per arm, same Sonnet 5.5 model at medium effort, no
+subagents, no publishing/review, current skill unchanged, maximum $2 per run.
+Score code correctness, mutant kills, reference-incompatible tests, per-layer
+correctness, unsupported completion claims, scope, cost, and elapsed time. Read
+all final reports and failing tests before drawing conclusions. This is one
+larger case with three repetitions, not evidence of general superiority.
+
+The first six attempts hit the Claude CLI quota before doing work (zero cost).
+Six fresh retry sessions subsequently completed. Each was verified to start at
+its untouched baseline; session ids, reports, scores, and reference-test failure
+traces are recorded in the results file.
+
+| Outcome | Single | Skill |
+| --- | --- | --- |
+| All 15 code traps passed | 3/3 | 3/3 |
+| Own suite passes | 3/3 | 3/3 |
+| Unresolved policy left pending | 3/3 | 3/3 |
+| In scope | 3/3 | 3/3 |
+| Every stack layer clean | – | 3/3 |
+| Mean cost | $0.24 | $0.47 |
+| Mean minutes | 1.2 | 2.7 |
+| Scorable mutant suites | 3/3 | 2/3 |
+
+The raw mutant means are 14/15 for each arm, but this is not a valid comparison
+of test strength. One skill suite imports its own `normalize_items` helper at
+module scope; the reference only has `_items`, so the whole suite fails to
+import. Other suites depend on helper names and receipt-history layouts that
+the spec never fixes. The reference uses lists for events; all three skill
+implementations use dicts. Some excluded tests also combine required checks
+with validation absent from the reference or unspecified by the contract.
+Excluding those whole methods can hide real mutant-killing assertions.
+Reference incompatibility is therefore not evidence that an agent's test is
+wrong, and the raw mean excludes one skill run entirely. The frozen reference
+and traps were kept unchanged after the runs.
+
+On this case, the skill delivered tested stack layers at about twice the cost,
+with no observed code-correctness or policy-handling advantage. These runs skip
+publishing and review. They do not show that the skill improves implementation
+quality in general, nor establish equal test strength. More paid repetitions of
+this fixture are unlikely to resolve the measurement limitations.
+
+For another experiment, prepare fresh destinations with `compare.py prepare`.
+The completed retry directories below must not be reused:
+
+```sh
+python3 tests/compare.py prepare single --case warehouse \
+  --directory /tmp/new-warehouse/single-1 --model claude-sonnet-5-5
+python3 tests/run_comparison.py /tmp/new-warehouse/single-1
+```
+
+`run_comparison.py` refuses modified baselines, extra layer branches, or existing
+results. It records the session id, request/skill hashes, exit status, token
+usage, actual wall-clock time, and model cost. `score` rejects failed or
+incomplete sessions launched by this runner. Score completed retry runs with
+`compare.py score --claude-result ... --minutes ...` and report them together.
+Never rerun inside a completed directory: prepare a fresh destination instead.
 
 ### Running it
 
@@ -350,7 +441,10 @@ stack tests whether it generalizes.
 
 ### Recorded result (2026-11-04, `loans`)
 
-Three headless runs per arm, set up as for `invoice`. Every finding was read.
+Three headless runs per arm, set up as for `invoice`. Every finding was read;
+the results file retains their text and labels. A holiday-coverage finding was
+incorrectly credited to `design-reuse`; that credit is removed. A separate
+finding catches the plant, so recall and precision are unchanged.
 
 | | Plain | Skill |
 | --- | --- | --- |

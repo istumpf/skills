@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Compare ways of applying one OpenSpec change against hidden trap tests.
 
-Cases: `comparison` (invoice-totals) and the held-out `loans` (loan-desk). Each
+Cases: `comparison` (invoice-totals), `loans` (loan-desk), and the larger
+`warehouse` (warehouse-ledger). Each
 case's trap data lives in `hidden/<case>/case.py`. Arms: `single` applies the
 change top to bottom with no skill; `skill` applies it with the SKILL.md given
 by --skill. The fixture has no remote, so skills that publish PRs cannot finish
@@ -25,7 +26,7 @@ import tempfile
 from types import SimpleNamespace
 
 HERE = Path(__file__).resolve().parent
-CASES = ("comparison", "loans")
+CASES = ("comparison", "loans", "warehouse")
 ARMS = ("single", "skill")
 
 
@@ -190,6 +191,11 @@ def layer_failures(case, repo):
 def score(directory, cost=None, minutes=None, validate_spec=True):
     root = Path(directory).resolve()
     metadata = json.loads((root / "evaluation.json").read_text())
+    audit_path = root / "run.json"
+    if audit_path.exists():
+        audit = json.loads(audit_path.read_text())
+        if audit.get("exit_code") != 0 or audit.get("is_error") or audit.get("invalid_result"):
+            raise ValueError("cannot score an incomplete or failed agent run")
     repo = root / "repo"
     saved = root / "score.json"
     previous = json.loads(saved.read_text()) if saved.exists() else {}
@@ -267,6 +273,7 @@ def report(directories):
         ("Mean traps passed", lambda s: s["traps_passed"]),
         ("Own tests pass", lambda s: int(s["own_tests_pass"])),
         ("Mean tests failing on reference", lambda s: len(s.get("tests_failing_on_reference", []))),
+        ("Runs with scorable mutant tests", lambda s: int(s.get("mutants_killed_count") is not None)),
         ("Mean mutants killed", lambda s: s.get("mutants_killed_count")),
         ("Stacks with every layer clean",
          lambda s: int(not any(s["layers"].values())) if s.get("layers") else None),

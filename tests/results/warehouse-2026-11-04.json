@@ -1,0 +1,646 @@
+{
+  "case": "warehouse",
+  "status": "completed; test-strength comparison inconclusive",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "manifest": {
+    "tests/fixtures/warehouse/.gitignore": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+    "tests/fixtures/warehouse/AGENTS.md": "e4f46a2e3af374248802a8e7ca10b38fbace4e946c8a9e8d2979a547437e1dc6",
+    "tests/fixtures/warehouse/notes.txt": "c314bd5f92796ff2036a75840ee075fe3b011fceeee695c1037bc7fca7e7867c",
+    "tests/fixtures/warehouse/openspec/changes/warehouse-ledger/design.md": "8871694212473ab3950a8429270c65c62fa7d16144261745a97846ffb73ceb64",
+    "tests/fixtures/warehouse/openspec/changes/warehouse-ledger/proposal.md": "f1c4b6d0fada391cdd6923c53113efa24dbc7caa17a44a2f50d832e537608493",
+    "tests/fixtures/warehouse/openspec/changes/warehouse-ledger/specs/warehouse-ledger/spec.md": "9efa87dc83e830b529d6a685d82c6892118737dd15cc0d0776726b8f3cba9d92",
+    "tests/fixtures/warehouse/openspec/changes/warehouse-ledger/tasks.md": "55230edcecdebaf05e795ae0fa838cf37e4449a16cc09831953888306110020f",
+    "tests/fixtures/warehouse/openspec/config.yaml": "85b53dd24fbe7d19c8b0f0ddccf5e82600c5c372c76b57a2a89dc34dfb0fc5b9",
+    "tests/fixtures/warehouse/warehouse.py": "cc3f581d78402710470fe753fb82a606190b1c59ceff97cdd81556dd18e85c0d",
+    "tests/hidden/warehouse/case.py": "fee6caeb09986c82ac3725a70cc985e98cf50c9b7c81c99bbf4626e73ff4f892",
+    "tests/hidden/warehouse/test_hidden_warehouse.py": "53ac0961988f8c5eadc70dfd38f1f7feb8e887714dedfc244913b7a1ff3bce59",
+    "tests/reference/warehouse/warehouse.py": "3d8515b6fd793a79e5fe87ac9d83a246d90dde0a902a28c0aca0868ae8a4b327",
+    "tests/reference/warehouse-naive/warehouse.py": "13b88cd9e12b0890c902b167d4bb3ff42d57cd8c9cd4af1247ab1edbdfb0b202"
+  },
+  "attempts": [
+    {
+      "run": "single-1",
+      "fresh": true,
+      "session_id": "b183f324-a16b-487e-b47c-32dee6eb4937",
+      "exit_code": 1,
+      "api_error": "usage_limit_reached",
+      "cost_usd": 0,
+      "output_tokens": 0
+    },
+    {
+      "run": "single-2",
+      "fresh": true,
+      "session_id": "9a5dc733-97a4-4833-875e-0b7af2fa5812",
+      "exit_code": 1,
+      "api_error": "usage_limit_reached",
+      "cost_usd": 0,
+      "output_tokens": 0
+    },
+    {
+      "run": "single-3",
+      "fresh": true,
+      "session_id": "3a09e952-9a7f-4de6-ab93-373bc0415009",
+      "exit_code": 1,
+      "api_error": "usage_limit_reached",
+      "cost_usd": 0,
+      "output_tokens": 0
+    },
+    {
+      "run": "skill-1",
+      "fresh": true,
+      "session_id": "7a13f292-2b10-4b20-931b-f2a165b2a2b1",
+      "exit_code": 1,
+      "api_error": "usage_limit_reached",
+      "cost_usd": 0,
+      "output_tokens": 0
+    },
+    {
+      "run": "skill-2",
+      "fresh": true,
+      "session_id": "d535691d-7221-4021-88b7-055118a61b37",
+      "exit_code": 1,
+      "api_error": "usage_limit_reached",
+      "cost_usd": 0,
+      "output_tokens": 0
+    },
+    {
+      "run": "skill-3",
+      "fresh": true,
+      "session_id": "f2b1ff07-2f06-4808-9744-020ee955e47b",
+      "exit_code": 1,
+      "api_error": "usage_limit_reached",
+      "cost_usd": 0,
+      "output_tokens": 0
+    }
+  ],
+  "initial_attempt_reason": "Claude CLI usage_limit_reached (HTTP 429); CLI reports reset 2:50pm America/Sao_Paulo. No implementation work occurred.",
+  "runs": [
+    {
+      "run": "single-1",
+      "case": "warehouse",
+      "arm": "single",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "traps_passed": 15,
+      "traps_total": 15,
+      "own_tests_pass": true,
+      "tests_failing_on_reference": [
+        "test_warehouse.BatchTests.test_bundle_op_and_errors"
+      ],
+      "mutants_killed": {
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": false,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "mutants_killed_count": 14,
+      "mutants_total": 15,
+      "layers": {},
+      "tasks_done": 18,
+      "tasks_total": 20,
+      "unprovable_checked": [],
+      "out_of_scope": [],
+      "committed": 0,
+      "cost_usd": 0.271096,
+      "minutes": 1.2309156443667841,
+      "spec_valid": true,
+      "session_id": "ad69aef0-2361-49a5-b5f4-43d356003dd6",
+      "fresh": true,
+      "skill_sha256": null,
+      "num_turns": 6,
+      "agent_report": "Groups 1\u20139 (tasks 1.1\u20139.2, 18 of 20) are implemented and checked off in `tasks.md`. Group 10 is not done: backorder policy needs a stakeholder decision on replenishment priority, which isn't available. I added no backorder code or tests and left 10.1 and 10.2 unchecked.\n\n**What I implemented**\n- **`warehouse.py`:** The existing `SCHEMA_VERSION` and `stock_key` are unchanged. I added:\n  - `new_state`\n  - `receive`\n  - `reserve`\n  - `sweep`\n  - `cancel`\n  - `ship`\n  - `transfer`\n  - `reserve_bundle`\n  - `dump_state`\n  - `load_state`\n  - `apply_batch`\n- **`test_warehouse.py`:** 33 unittest tests covering every group.\n\n**Behaviors worth knowing**\n- **Detached state:** Every operation deep-copies its input, including on no-ops, and never changes the caller's state.\n- **Availability:** It is on-hand minus active reservations with `expires > now`. `reserve` and `transfer` use it. `ship` checks on-hand directly, and the reservation rules keep that sufficient.\n- **Snapshots:** `dump_state` runs the state through the same validation as `load_state`. Loading rejects bad JSON, a wrong version (including `True`), negative or bool stock, bad statuses, and missing or extra fields.\n- **Batches:** `apply_batch` passes `now` only to operations that accept it. A command that supplies `now` or `state` itself, an unknown op, or bad arguments raises `ValueError`.\n\n**Checks run:** `python3 -m unittest -q` ran 33 tests, all passing.\n\n**Scope:** I didn't change the proposal, design, spec or any skill files, and I made no commits. `git status` shows only `warehouse.py`, `test_warehouse.py` and the `tasks.md` update.",
+      "reference_test_failures": [
+        [
+          "test_warehouse.BatchTests.test_bundle_op_and_errors",
+          "Traceback (most recent call last):\n  File \"/tmp/tmp8xxn6zj_/test_warehouse.py\", line 268, in test_bundle_op_and_errors\n    w.apply_batch(s, [cmd], 0)\n  File \"/tmp/tmp8xxn6zj_/warehouse.py\", line 163, in apply_batch\n    op = args.pop(\"op\")\nKeyError: 'op'\n"
+        ]
+      ]
+    },
+    {
+      "run": "single-2",
+      "case": "warehouse",
+      "arm": "single",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "traps_passed": 15,
+      "traps_total": 15,
+      "own_tests_pass": true,
+      "tests_failing_on_reference": [
+        "test_warehouse.BatchTests.test_bad_commands",
+        "test_warehouse.SnapshotTests.test_rejects_bad"
+      ],
+      "mutants_killed": {
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": false,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "mutants_killed_count": 14,
+      "mutants_total": 15,
+      "layers": {},
+      "tasks_done": 18,
+      "tasks_total": 20,
+      "unprovable_checked": [],
+      "out_of_scope": [],
+      "committed": 0,
+      "cost_usd": 0.2274521,
+      "minutes": 1.1398307511666643,
+      "spec_valid": true,
+      "session_id": "6f441727-4b79-4126-a1ef-a79aeef95c72",
+      "fresh": true,
+      "skill_sha256": null,
+      "num_turns": 5,
+      "agent_report": "Groups 1\u20139 are implemented and tested. Group 10 (backorders) is blocked on a policy decision and stays unchecked.\n\n**What I did**\n- **`warehouse.py`:** I added all the operations from groups 1\u20139 and left `SCHEMA_VERSION` and `stock_key` unchanged. The operations never mutate their input and return detached copies, including on no-ops.\n- **`test_warehouse.py`:** 34 unittest tests cover each group, including the error cases, detached copies and batch atomicity.\n- **`tasks.md`:** I checked tasks 1.1\u20139.2, which is 18 of 20. I did not touch the proposal, design or spec, and I made no commits.\n\n**Checks run**\n- `python3 -m unittest` runs 34 tests, all passing.\n- I ran `openspec status` and `openspec instructions apply` at the start to read the change.\n- The spec leaves a few edge cases open. My choices:\n  - **`now` in a batch:** a command's own `now` overrides the batch `now`.\n  - **Bad batch arguments:** missing or unexpected arguments raise `ValueError`.\n  - **Dump validation:** `dump_state` validates the state the same way `load_state` does.\n\n**Blocker**\n- **Tasks 10.1 and 10.2 are unchecked.** The design says the priority for giving scarce replenishment to backorders hasn't been decided, and no default is authorized. No stakeholder is available, so I did not specify or implement a backorder API or invent an allocation priority.",
+      "reference_test_failures": [
+        [
+          "test_warehouse.SnapshotTests.test_rejects_bad",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpwt2ql_7b/test_warehouse.py\", line 225, in test_rejects_bad\n    with self.assertRaises(ValueError, msg=text):\nAssertionError: ValueError not raised : {\"version\": 1, \"state\": {\"stock\": {}, \"orders\": {}, \"events\": {\"e\": {\"site\": \"n\", \"sku\": \"a\", \"qty\": 0}}}}\n"
+        ],
+        [
+          "test_warehouse.BatchTests.test_bad_commands",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpwt2ql_7b/test_warehouse.py\", line 274, in test_bad_commands\n    w.apply_batch(w.new_state(), cmds, 0)\n  File \"/tmp/tmpwt2ql_7b/warehouse.py\", line 163, in apply_batch\n    op = args.pop(\"op\")\nKeyError: 'op'\n"
+        ]
+      ]
+    },
+    {
+      "run": "single-3",
+      "case": "warehouse",
+      "arm": "single",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "traps_passed": 15,
+      "traps_total": 15,
+      "own_tests_pass": true,
+      "tests_failing_on_reference": [
+        "test_warehouse.BatchTests.test_bad_commands",
+        "test_warehouse.SnapshotTests.test_rejects_bad",
+        "test_warehouse.StateTests.test_item_normalization"
+      ],
+      "mutants_killed": {
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": false,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "mutants_killed_count": 14,
+      "mutants_total": 15,
+      "layers": {},
+      "tasks_done": 18,
+      "tasks_total": 20,
+      "unprovable_checked": [],
+      "out_of_scope": [],
+      "committed": 0,
+      "cost_usd": 0.2216583,
+      "minutes": 1.1226689605832993,
+      "spec_valid": true,
+      "session_id": "bfc9740f-07db-4e9e-a6d7-091d6e4bb704",
+      "fresh": true,
+      "skill_sha256": null,
+      "num_turns": 5,
+      "agent_report": "Groups 1\u20139 are implemented and ticked in `tasks.md`; group 10 (backorder policy) is left unchecked because it's blocked on a stakeholder decision. The full suite (34 `unittest` tests) passes.\n\n- **`warehouse.py`**: I appended to the file. `SCHEMA_VERSION` and `stock_key` are unchanged. It now has `new_state`, `receive`, `reserve`, `sweep`, `cancel`, `ship`, `transfer`, `reserve_bundle`, `dump_state`, `load_state` and `apply_batch`, following the design's validation, detached-state and snapshot rules.\n- **`test_warehouse.py`**: new file with tests for each group, including the error cases and checks that inputs aren't mutated.\n- **`tasks.md`**: 18 of 20 tasks checked; 10.1 and 10.2 stay unchecked. I did not touch the proposal, design or spec, and I made no commits.\n\nI wrote the implementation and tests for all groups in one pass and then ran the suite once, rather than running it after each group as the `x.2` tasks say. The final result is the same, but I didn't run the suite at each step.\n\n**Blocker:** the design says no replenishment priority is authorized and no stakeholder is available. So I added no backorder API and invented no allocation rule.\n\nI also had to make three choices the spec doesn't spell out:\n- **`now` in a batch:** a batch command that supplies its own `now` is rejected with `ValueError`.\n- **`TypeError` in a batch:** a `TypeError` from bad command arguments is converted to `ValueError`.\n- **Snapshot loading:** `load_state` rejects any state, order or event record that has missing or extra fields.",
+      "reference_test_failures": [
+        [
+          "test_warehouse.SnapshotTests.test_rejects_bad",
+          "Traceback (most recent call last):\n  File \"/tmp/tmp_pnyf8ws/test_warehouse.py\", line 245, in test_rejects_bad\n    with self.assertRaises(ValueError, msg=text):\nAssertionError: ValueError not raised : {\"version\": 1, \"state\": {\"stock\": {}, \"orders\": {\"o\": {\"site\": \"n\", \"items\": {\"a\": 1}, \"expires\": true, \"status\": \"active\"}}, \"events\": {}}}\n"
+        ],
+        [
+          "test_warehouse.BatchTests.test_bad_commands",
+          "Traceback (most recent call last):\n  File \"/tmp/tmp_pnyf8ws/test_warehouse.py\", line 299, in test_bad_commands\n    w.apply_batch(stocked(), [cmd], 0)\n  File \"/tmp/tmp_pnyf8ws/warehouse.py\", line 163, in apply_batch\n    op = args.pop(\"op\")\nKeyError: 'op'\n"
+        ],
+        [
+          "test_warehouse.StateTests.test_item_normalization",
+          "Traceback (most recent call last):\n  File \"/tmp/tmp_pnyf8ws/test_warehouse.py\", line 21, in test_item_normalization\n    self.assertEqual(w._norm_items(\"N\", {\"a\": 1, \" A \": 2}), {\"A\": 3})\nAttributeError: module 'warehouse' has no attribute '_norm_items'\n"
+        ]
+      ]
+    },
+    {
+      "run": "skill-1",
+      "case": "warehouse",
+      "arm": "skill",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "traps_passed": 15,
+      "traps_total": 15,
+      "own_tests_pass": true,
+      "tests_failing_on_reference": [
+        "unittest.loader._FailedTest.test_warehouse"
+      ],
+      "mutants_killed": null,
+      "mutants_killed_count": null,
+      "mutants_total": 15,
+      "layers": {
+        "warehouse-ledger/1-state-and-validation": [],
+        "warehouse-ledger/2-receipts": [],
+        "warehouse-ledger/3-reservations": [],
+        "warehouse-ledger/4-lifecycle": [],
+        "warehouse-ledger/5-shipment": [],
+        "warehouse-ledger/6-transfers": [],
+        "warehouse-ledger/7-bundles": [],
+        "warehouse-ledger/8-snapshots": [],
+        "warehouse-ledger/9-atomic-batches": []
+      },
+      "tasks_done": 18,
+      "tasks_total": 20,
+      "unprovable_checked": [],
+      "out_of_scope": [],
+      "committed": 10,
+      "cost_usd": 0.45627759999999995,
+      "minutes": 2.3869112983332648,
+      "spec_valid": true,
+      "session_id": "ca6c3435-03d7-4be1-a01a-2506b72dbfd1",
+      "fresh": true,
+      "skill_sha256": "c85b5446622b2d5b445cd52d7f54b0ea701b2e1cb9510fbe63b22f06f4edefe6",
+      "num_turns": 15,
+      "agent_report": "I implemented groups 1\u20139 of `warehouse-ledger` as nine stacked layer branches. Group 10 (backorder policy) is blocked and left untouched. All 60 tests pass on the top branch, and `openspec validate warehouse-ledger --type change --strict --no-interactive` reports the change valid.\n\n**Branches, bottom to top** (all `warehouse-ledger/<n>-\u2026`)\n1. `1-state-and-validation` has `new_state` and `normalize_items`.\n2. `2-receipts` has `receive` with idempotency by event id.\n3. `3-reservations` has `available` and `reserve`.\n4. `4-lifecycle` has `sweep` and `cancel`.\n5. `5-shipment` has `ship`.\n6. `6-transfers` has `transfer`.\n7. `7-bundles` has `reserve_bundle`.\n8. `8-snapshots` has `dump_state` and `load_state`.\n9. `9-atomic-batches` has `apply_batch`. This is the top branch and it is checked out.\n\n**What changed in the repo**\n- I edited only `warehouse.py`, `test_warehouse.py` and `tasks.md`.\n- `SCHEMA_VERSION` and `stock_key` are unchanged, and `notes.txt` is untouched.\n- Tasks 1.1\u20139.2 are checked, each with an `evidence:` line under the task.\n- I did not edit the proposal, design or spec.\n\n**Checks run**\n- `python3 -m unittest -q` ran after each layer, so every layer is a tested state.\n- The strict `openspec validate` ran on the top branch.\n- I started with an empty-items test that failed on layer 3. I fixed it and committed only after it passed.\n- I did not run `git diff --stat <parent>...<branch>` on every layer. I ran it only on layer 9, which touches only the three expected files.\n\n**What I skipped or couldn't do**\n- **Branches:** `gh stack init`/`add` were not run, because there is no remote. I created the layers with `git checkout -b`.\n- **Publishing and review:** I skipped `gh stack submit`, the draft PRs, and the `stacked-pr-feedback` review, as you instructed.\n- **Independent review:** none has happened. This is a local draft stack, not acceptance.\n- **Blocker:** tasks 10.1 and 10.2 stay unchecked. The design says no backorder priority rule is authorized, and no stakeholder is available. I did not invent a rule or add a backorder API.\n\n**Choices the spec left open**\n- `load_state` does not check that active reservations fit within stock. The spec doesn't ask for that check.\n- `apply_batch` raises `ValueError` if a command supplies `now` or `state` itself, or has bad arguments.\n\nI did not modify any skill files.",
+      "reference_test_failures": [
+        [
+          "unittest.loader._FailedTest.test_warehouse",
+          "ImportError: Failed to import test module: test_warehouse\nTraceback (most recent call last):\n  File \"/usr/lib/python3.10/unittest/loader.py\", line 436, in _find_test_path\n    module = self._get_module_from_name(name)\n  File \"/usr/lib/python3.10/unittest/loader.py\", line 377, in _get_module_from_name\n    __import__(name)\n  File \"/tmp/tmp9elfhfan/test_warehouse.py\", line 6, in <module>\n    from warehouse import apply_batch, dump_state, load_state, new_state, normalize_items, cancel, receive, reserve, reserve_bundle, ship, stock_key, sweep, transfer\nImportError: cannot import name 'normalize_items' from 'warehouse' (/tmp/tmp9elfhfan/warehouse.py)\n\n"
+        ]
+      ]
+    },
+    {
+      "run": "skill-2",
+      "case": "warehouse",
+      "arm": "skill",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "traps_passed": 15,
+      "traps_total": 15,
+      "own_tests_pass": true,
+      "tests_failing_on_reference": [
+        "test_warehouse.BatchTests.test_unknown_op_and_malformed_commands",
+        "test_warehouse.LifecycleTests.test_sweep_validates_now",
+        "test_warehouse.ReceiveTests.test_receive_stock",
+        "test_warehouse.ReceiveTests.test_replay_is_noop_and_detached",
+        "test_warehouse.ReserveTests.test_invalid_inputs",
+        "test_warehouse.SnapshotTests.test_load_canonicalizes_and_combines",
+        "test_warehouse.SnapshotTests.test_load_rejects_untrusted_input",
+        "test_warehouse.StateTests.test_copy_is_detached",
+        "test_warehouse.StateTests.test_normalize_canonicalizes_and_combines_duplicates",
+        "test_warehouse.StateTests.test_normalize_rejects_bad_quantities",
+        "test_warehouse.StateTests.test_normalize_rejects_non_string_sku",
+        "test_warehouse.StateTests.test_normalize_result_is_detached"
+      ],
+      "mutants_killed": {
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": false,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "mutants_killed_count": 14,
+      "mutants_total": 15,
+      "layers": {
+        "warehouse-ledger/1-state-and-validation": [],
+        "warehouse-ledger/2-receipts": [],
+        "warehouse-ledger/3-reservations": [],
+        "warehouse-ledger/4-lifecycle": [],
+        "warehouse-ledger/5-shipment": [],
+        "warehouse-ledger/6-transfers": [],
+        "warehouse-ledger/7-bundles": [],
+        "warehouse-ledger/8-snapshots": [],
+        "warehouse-ledger/9-atomic-batches": []
+      },
+      "tasks_done": 18,
+      "tasks_total": 20,
+      "unprovable_checked": [],
+      "out_of_scope": [],
+      "committed": 9,
+      "cost_usd": 0.5030181,
+      "minutes": 3.102201442850007,
+      "spec_valid": true,
+      "session_id": "b85ca7fa-25e7-49c0-b9fc-49df79e63a46",
+      "fresh": true,
+      "skill_sha256": "c85b5446622b2d5b445cd52d7f54b0ea701b2e1cb9510fbe63b22f06f4edefe6",
+      "num_turns": 23,
+      "agent_report": "Groups 1\u20139 are implemented as nine stacked layer branches, and the full suite passes (71 tests). Group 10 is blocked on a stakeholder decision and left unimplemented.\n\n**What I implemented** (only `warehouse.py`, `test_warehouse.py` and `tasks.md` changed; `SCHEMA_VERSION` and `stock_key` are untouched):\n\n| Branch (all under `warehouse-ledger/`) | Group |\n|---|---|\n| `1-state-and-validation` | `new_state`, item normalization, preserved-value tests |\n| `2-receipts` | `receive` |\n| `3-reservations` | `reserve` |\n| `4-lifecycle` | `sweep`, `cancel` |\n| `5-shipment` | `ship` |\n| `6-transfers` | `transfer` |\n| `7-bundles` | `reserve_bundle` |\n| `8-snapshots` | `dump_state`, `load_state` |\n| `9-atomic-batches` | `apply_batch` (top branch, currently checked out) |\n\n- **Layers:** `gh stack init` and `gh stack add` worked locally without a remote, so I didn't need the `git checkout -b` fallback. Each layer has one commit containing only its group's code and tests.\n- **Criteria map:** I kept it in my working notes, as the skill describes. The tests include ones aimed at the plausible shortcuts, for example:\n  - a reservation expiring exactly at `now` releases capacity before any sweep;\n  - transfers use availability rather than on-hand stock;\n  - bundle components are combined and multiplied;\n  - snapshots keep terminal orders and receipt history, so replaying after a reload doesn't change stock twice.\n- **Evidence:** Each checked task has an `evidence:` line in `tasks.md`.\n\n**Checks run:**\n- `python3 -m unittest -q` passed at every layer and at the top (71 tests).\n- `openspec validate warehouse-ledger --type change --strict --no-interactive` reports the change is valid.\n- I checked each layer's diff stat to confirm it only touches its own group.\n- One of my own batch tests used the wrong site and passed for the wrong reason. I fixed it before committing group 9.\n\n**Blockers and unmet items:**\n- **Group 10:** tasks 10.1 and 10.2 stay unchecked. The design says no backorder priority rule is authorized and no stakeholder is available, so I invented nothing. I didn't create a branch for it.\n- **Publishing and review:** per your instruction I skipped `gh stack submit`, the PR edits and the `stacked-pr-feedback` review. There are no PRs, no CI run and no independent review of pushed heads. This is a local draft stack only, so acceptance is not complete.\n\n**Judgment calls the spec didn't settle** (all in `warehouse.py`):\n- `apply_batch` rejects a command that supplies its own `now`.\n- `apply_batch` turns a wrong-keyword `TypeError` into `ValueError`.\n- `load_state` rejects unknown top-level state keys.\n- `load_state` keeps any extra fields on an order record.\n- `ship` also raises `ValueError` if on-hand stock is somehow short.\n\nI left `chk.sh`, a small helper that checks off tasks, in `/tmp/warehouse-bench-2026-11-04/retry/skill-2`, outside the repo.",
+      "reference_test_failures": [
+        [
+          "test_warehouse.LifecycleTests.test_sweep_validates_now",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 201, in test_sweep_validates_now\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n"
+        ],
+        [
+          "test_warehouse.ReceiveTests.test_receive_stock",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 53, in test_receive_stock\n    self.assertEqual(s[\"events\"], {\"e1\": {\"site\": \"NORTH\", \"sku\": \"A\", \"qty\": 5}})\nAssertionError: {'e1': ['NORTH:A', 5]} != {'e1': {'site': 'NORTH', 'sku': 'A', 'qty': 5}}\n- {'e1': ['NORTH:A', 5]}\n+ {'e1': {'qty': 5, 'site': 'NORTH', 'sku': 'A'}}\n"
+        ],
+        [
+          "test_warehouse.ReserveTests.test_invalid_inputs",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 165, in test_invalid_inputs\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n"
+        ],
+        [
+          "test_warehouse.SnapshotTests.test_load_canonicalizes_and_combines",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 456, in test_load_canonicalizes_and_combines\n    self.assertEqual(s[\"events\"][\"e\"], {\"site\": \"N\", \"sku\": \"A\", \"qty\": 2})\nAssertionError: {'site': 'n ', 'sku': 'a', 'qty': 2} != {'site': 'N', 'sku': 'A', 'qty': 2}\n- {'qty': 2, 'site': 'n ', 'sku': 'a'}\n?                     ^^           ^\n\n+ {'qty': 2, 'site': 'N', 'sku': 'A'}\n?                     ^           ^\n\n"
+        ],
+        [
+          "test_warehouse.SnapshotTests.test_load_rejects_untrusted_input",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 481, in test_load_rejects_untrusted_input\n    with self.assertRaises(ValueError, msg=text):\nAssertionError: ValueError not raised : {\"version\": 1, \"state\": {\"stock\": {\"N:A\": 1}, \"orders\": {\"o\": {\"site\": \"N\", \"items\": {\"A\": 1}, \"expires\": \"5\", \"status\": \"active\"}}, \"events\": {}}}\n"
+        ],
+        [
+          "test_warehouse.BatchTests.test_unknown_op_and_malformed_commands",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 561, in test_unknown_op_and_malformed_commands\n    w.apply_batch(s, cmds, 1)\n  File \"/tmp/tmpkxacs0d9/warehouse.py\", line 163, in apply_batch\n    op = args.pop(\"op\")\nKeyError: 'op'\n"
+        ],
+        [
+          "test_warehouse.ReceiveTests.test_replay_is_noop_and_detached",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 65, in test_replay_is_noop_and_detached\n    s2[\"events\"][\"e1\"][\"qty\"] = 99\nTypeError: list indices must be integers or slices, not str\n"
+        ],
+        [
+          "test_warehouse.StateTests.test_copy_is_detached",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 42, in test_copy_is_detached\n    c = w._copy(s)\nAttributeError: module 'warehouse' has no attribute '_copy'\n"
+        ],
+        [
+          "test_warehouse.StateTests.test_normalize_canonicalizes_and_combines_duplicates",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 19, in test_normalize_canonicalizes_and_combines_duplicates\n    self.assertEqual(w.normalize_items({\"a\": 1, \" A \": 2, \"b\": 3}), {\"A\": 3, \"B\": 3})\nAttributeError: module 'warehouse' has no attribute 'normalize_items'\n"
+        ],
+        [
+          "test_warehouse.StateTests.test_normalize_rejects_bad_quantities",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 24, in test_normalize_rejects_bad_quantities\n    w.normalize_items({\"a\": bad})\nAttributeError: module 'warehouse' has no attribute 'normalize_items'\n"
+        ],
+        [
+          "test_warehouse.StateTests.test_normalize_rejects_non_string_sku",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 30, in test_normalize_rejects_non_string_sku\n    w.normalize_items({1: 1})\nAttributeError: module 'warehouse' has no attribute 'normalize_items'\n"
+        ],
+        [
+          "test_warehouse.StateTests.test_normalize_result_is_detached",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpkxacs0d9/test_warehouse.py\", line 34, in test_normalize_result_is_detached\n    out = w.normalize_items(src)\nAttributeError: module 'warehouse' has no attribute 'normalize_items'\n"
+        ]
+      ]
+    },
+    {
+      "run": "skill-3",
+      "case": "warehouse",
+      "arm": "skill",
+      "model": "claude-sonnet-5-5",
+      "traps": {
+        "SpecScenarios": true,
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": true,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "traps_passed": 15,
+      "traps_total": 15,
+      "own_tests_pass": true,
+      "tests_failing_on_reference": [
+        "test_warehouse.BatchTests.test_unknown_op_and_malformed_commands",
+        "test_warehouse.LifecycleTests.test_sweep_does_not_mutate_input_and_requires_int_now",
+        "test_warehouse.NormalizeItemsTests.test_canonicalizes_and_adds_duplicates",
+        "test_warehouse.NormalizeItemsTests.test_rejects_bad_quantities",
+        "test_warehouse.NormalizeItemsTests.test_rejects_non_mapping_and_bad_sku",
+        "test_warehouse.ReceiveTests.test_input_not_mutated_and_result_detached",
+        "test_warehouse.ReserveTests.test_invalid_requests_raise",
+        "test_warehouse.ShipTests.test_insufficient_on_hand_raises",
+        "test_warehouse.SnapshotTests.test_load_canonicalizes_and_combines",
+        "test_warehouse.SnapshotTests.test_load_rejects_bad_orders_and_events"
+      ],
+      "mutants_killed": {
+        "ExistingApi": true,
+        "QuantityValidation": true,
+        "CanonicalItems": true,
+        "ReceiptReplay": true,
+        "ReceiptConflict": true,
+        "ExpiryCapacity": true,
+        "DetachedState": false,
+        "TerminalIds": true,
+        "ShipRetry": true,
+        "TransferReservations": true,
+        "BundleExpansion": true,
+        "SnapshotHistory": true,
+        "SnapshotValidation": true,
+        "BatchAtomicity": true,
+        "BatchReplay": true
+      },
+      "mutants_killed_count": 14,
+      "mutants_total": 15,
+      "layers": {
+        "warehouse-ledger/1-state-and-validation": [],
+        "warehouse-ledger/2-receipts": [],
+        "warehouse-ledger/3-reservations": [],
+        "warehouse-ledger/4-lifecycle": [],
+        "warehouse-ledger/5-shipment": [],
+        "warehouse-ledger/6-transfers": [],
+        "warehouse-ledger/7-bundles": [],
+        "warehouse-ledger/8-snapshots": [],
+        "warehouse-ledger/9-atomic-batches": []
+      },
+      "tasks_done": 18,
+      "tasks_total": 20,
+      "unprovable_checked": [],
+      "out_of_scope": [],
+      "committed": 9,
+      "cost_usd": 0.45667729999999995,
+      "minutes": 2.7456775871166124,
+      "spec_valid": true,
+      "session_id": "19bdf4a8-89b0-4b7b-86cc-2336ac0a9254",
+      "fresh": true,
+      "skill_sha256": "c85b5446622b2d5b445cd52d7f54b0ea701b2e1cb9510fbe63b22f06f4edefe6",
+      "num_turns": 17,
+      "agent_report": "I implemented groups 1\u20139 of `warehouse-ledger`. Group 10 (backorder policy) is blocked on a stakeholder decision, so tasks 10.1 and 10.2 stay unchecked.\n\n**Implemented**\n- `warehouse.py` keeps `SCHEMA_VERSION` and `stock_key` unchanged and adds `new_state`, `receive`, `reserve`, `sweep`, `cancel`, `ship`, `transfer`, `reserve_bundle`, `dump_state`, `load_state` and `apply_batch`.\n- `test_warehouse.py` has 61 tests. Tasks 1.1\u20139.2 are checked in `tasks.md`, each with an `evidence:` line.\n- Nothing else changed. I didn't touch the proposal, design, spec, `notes.txt` or any skill file.\n- Each group is one commit on its own layer branch, built with `gh stack`, which worked without a remote. The stack is `warehouse-ledger/1-state-and-validation` through `warehouse-ledger/9-atomic-batches`. The top branch, `9-atomic-batches`, is checked out.\n\n**Checks run**\n- `python3 -m unittest -q` passed at every layer, 61 tests at the top.\n- `openspec validate warehouse-ledger --type change --strict --no-interactive` passed.\n- I did not run `git diff --stat <parent>...<branch>` on each layer to confirm it shows only its group. I checked only the top-versus-`main` diff.\n\n**Not done**\n- **Backorder policy (10.1, 10.2):** `design.md` says no priority rule is authorized, so I added no backorder API.\n- **Publishing and review:** skipped as you instructed. There are no pushed branches or PRs, no local `stacked-pr-feedback` pass, and no independent review.\n- **Status:** a local layered stack is delivered; acceptance is not complete.\n\n**Interpretation choices** (the spec doesn't say; revisit if you disagree)\n- `ship` on an active order whose expiry has passed but hasn't been swept raises `ValueError`, per the \"expires > now\" rule.\n- Receipts are stored as `{site, sku, qty}`, canonicalized.\n- `load_state` keeps unknown extra fields on order records.\n- `apply_batch` rejects any command whose keys don't exactly match the operation's arguments, including a caller-supplied `now`, with `ValueError`.",
+      "reference_test_failures": [
+        [
+          "test_warehouse.LifecycleTests.test_sweep_does_not_mutate_input_and_requires_int_now",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 183, in test_sweep_does_not_mutate_input_and_requires_int_now\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n"
+        ],
+        [
+          "test_warehouse.ReserveTests.test_invalid_requests_raise",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 137, in test_invalid_requests_raise\n    with self.assertRaises(ValueError, msg=repr(args)):\nAssertionError: ValueError not raised : ('o', 'north', {'A': 1}, True, 0)\n"
+        ],
+        [
+          "test_warehouse.ShipTests.test_insufficient_on_hand_raises",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 256, in test_insufficient_on_hand_raises\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n"
+        ],
+        [
+          "test_warehouse.SnapshotTests.test_load_canonicalizes_and_combines",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 408, in test_load_canonicalizes_and_combines\n    self.assertEqual(s[\"events\"][\"e\"], {\"site\": \"NORTH\", \"sku\": \"A\", \"qty\": 5})\nAssertionError: {'site': 'north', 'sku': 'a', 'qty': 5} != {'site': 'NORTH', 'sku': 'A', 'qty': 5}\n- {'qty': 5, 'site': 'north', 'sku': 'a'}\n?                     ^^^^^           ^\n\n+ {'qty': 5, 'site': 'NORTH', 'sku': 'A'}\n?                     ^^^^^           ^\n\n"
+        ],
+        [
+          "test_warehouse.SnapshotTests.test_load_rejects_bad_orders_and_events",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 431, in test_load_rejects_bad_orders_and_events\n    with self.assertRaises(ValueError, msg=repr(bad)):\nAssertionError: ValueError not raised : {'site': 'n', 'items': {'a': 1}, 'expires': True, 'status': 'active'}\n"
+        ],
+        [
+          "test_warehouse.BatchTests.test_unknown_op_and_malformed_commands",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 537, in test_unknown_op_and_malformed_commands\n    warehouse.apply_batch(new_state(), cmds, 1)\n  File \"/tmp/tmpo72mihiv/warehouse.py\", line 163, in apply_batch\n    op = args.pop(\"op\")\nKeyError: 'op'\n"
+        ],
+        [
+          "test_warehouse.NormalizeItemsTests.test_canonicalizes_and_adds_duplicates",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 25, in test_canonicalizes_and_adds_duplicates\n    warehouse._normalize_items({\"a\": 1, \" A \": 2, \"b\": 3}), {\"A\": 3, \"B\": 3}\nAttributeError: module 'warehouse' has no attribute '_normalize_items'\n"
+        ],
+        [
+          "test_warehouse.NormalizeItemsTests.test_rejects_bad_quantities",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 31, in test_rejects_bad_quantities\n    warehouse._normalize_items({\"a\": bad})\nAttributeError: module 'warehouse' has no attribute '_normalize_items'\n"
+        ],
+        [
+          "test_warehouse.NormalizeItemsTests.test_rejects_non_mapping_and_bad_sku",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 36, in test_rejects_non_mapping_and_bad_sku\n    warehouse._normalize_items(bad)\nAttributeError: module 'warehouse' has no attribute '_normalize_items'\n"
+        ],
+        [
+          "test_warehouse.ReceiveTests.test_input_not_mutated_and_result_detached",
+          "Traceback (most recent call last):\n  File \"/tmp/tmpo72mihiv/test_warehouse.py\", line 74, in test_input_not_mutated_and_result_detached\n    s2[\"events\"][\"e1\"][\"qty\"] = 99\nTypeError: list indices must be integers or slices, not str\n"
+        ]
+      ]
+    }
+  ],
+  "audit": {
+    "code": "All six fresh runs passed all 15 frozen code traps and their own tests, stayed in scope, and left tasks 10.1 and 10.2 unchecked. All three skill stacks passed every layer check.",
+    "test_strength": "No valid comparative conclusion. skill-1 imports normalize_items at module scope; the reference only has _items, so its entire suite fails to import and cannot be scored. Other suites use unspecified helper names and event record layouts. Some mixed tests also demand validation omitted by the reference, masking assertions that could kill a mutant. The frozen reference was not changed after the runs.",
+    "raw_means": "Mean mutants killed is 14/15 among all three single runs and only two scorable skill runs. The displayed 14 versus 14 uses unequal denominators and excludes reference-incompatible tests. It does not demonstrate equal test strength.",
+    "failure_interpretation": "Reference incompatibilities are not automatically agent defects. Examples: normalize_items/_normalize_items/_norm_items and _copy are not prescribed APIs; receipt history representation is unspecified (reference stores lists, agents use dicts); validation tests combine required cases with invalid shapes/times whose handling is absent from or not settled by the reference/spec.",
+    "conclusion": "On this larger case, no observed code-correctness or unresolved-policy advantage. The skill adds tested stack construction at roughly twice the cost. Publishing and review were skipped, so this does not assess their benefits. Three repetitions of one explicit-policy fixture do not establish general superiority or equivalence."
+  },
+  "summary": {
+    "single": {
+      "runs": 3,
+      "mean_cost_usd": 0.2400688,
+      "mean_minutes": 1.1644717853722493,
+      "scorable_mutant_runs": 3,
+      "mean_num_turns": 5.333333333333333
+    },
+    "skill": {
+      "runs": 3,
+      "mean_cost_usd": 0.471991,
+      "mean_minutes": 2.7449301094332945,
+      "scorable_mutant_runs": 2,
+      "mean_num_turns": 18.333333333333332
+    }
+  }
+}

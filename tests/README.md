@@ -94,6 +94,16 @@ Before comparing arms on this case, calibrate it: run the `single` arm at least
 four times and set aside traps it passes in every run. They show nothing about
 a skill.
 
+Calibration (2026-11-04): four headless `single` runs, Sonnet 5.5 at medium
+effort, about $0.13 and 0.8 minutes each. Every run passed all 11 code traps,
+left task 6.3 unchecked, and reported it as a blocker. So on this case, the
+code traps and the unprovable task do not separate arms either. Test strength
+does: every run killed exactly 8 of 11 mutants and missed the same three.
+`RenewFromDue` survives because every renewal test renews on the due date, as
+the scenario does. `ReceiptCrossGroup` survives because receipt tests never
+span a closed day. `ExistingApi` survives because no test checks `HOLIDAYS` or
+`is_open`. Compare arms on `mutants_killed_count`.
+
 ### Running it
 
 Prepare several runs per arm in fresh destinations, using the same host and

@@ -79,7 +79,10 @@ def prepare(arm, directory, model, skill=None, case_name="comparison"):
     git(repo, "commit", "-m", "chore: comparison fixture baseline")
     if arm == "skill":
         prompt = (f"Use the skill at {Path(skill).resolve()} to apply the OpenSpec change "
-                  f"{case.change}. There is no Git remote; skip any publishing step.")
+                  f"{case.change}. There is no Git remote; skip any publishing step and the "
+                  "review that follows it. If `gh stack` cannot run without a remote, create "
+                  "the same layer branches with `git checkout -b`. Commits on those layer "
+                  "branches are allowed despite AGENTS.md.")
     else:
         prompt = (f"Apply the OpenSpec change {case.change} yourself, top to bottom, in this "
                   "conversation. Use `openspec status` and `openspec instructions apply` "

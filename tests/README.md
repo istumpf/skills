@@ -104,6 +104,31 @@ the scenario does. `ReceiptCrossGroup` survives because receipt tests never
 span a closed day. `ExistingApi` survives because no test checks `HOLIDAYS` or
 `is_open`. Compare arms on `mutants_killed_count`.
 
+### Recorded result (2026-11-04)
+
+[`results/precision-2026-11-04.json`](results/precision-2026-11-04.json)
+records four headless runs per arm on `loans`, Sonnet 5.5 at medium effort.
+The skill arm used this branch's `openspec-stack-apply`, with publishing and
+review skipped.
+
+| | Single | Skill |
+| --- | --- | --- |
+| Code traps passed | 11/11 in every run | 11/11 in every run |
+| Mean mutants killed | 8.0 of 11 | 10.25 of 11 |
+| `RenewFromDue` killed | 0/4 | 4/4 |
+| `ReceiptCrossGroup` killed | 0/4 | 4/4 |
+| `ExistingApi` killed | 0/4 | 1/4 |
+| Stacks with every layer clean | – | 4/4 |
+| Mean cost | $0.13 | $0.13 |
+| Mean wall-clock | 0.8 min | 0.5 min |
+
+Both arms wrote correct code. The skill arm's tests also caught the renewal and
+receipt mistakes that every single run's tests missed. Those are the
+cross-group and scenario-shadowed rules the criteria map and the "fails on the
+naive implementation" rule target. For each of those two mutants, 4/4 against
+0/4 gives a two-sided Fisher exact p of about 0.03. Cost did not rise. Neither
+arm tests the existing API reliably.
+
 ### Running it
 
 Prepare several runs per arm in fresh destinations, using the same host and
@@ -250,3 +275,33 @@ nothing.
 
 Pattern matching is approximate. Read `unmatched` in each `score.json` before
 trusting a precision figure, and label any real defect the plants missed.
+Layer 1's `\d` also matches non-ASCII digits. That defect was not planted,
+but it is real; label findings about it `true`. It is kept so later runs stay
+comparable with the recorded ones.
+
+### Recorded result (2026-11-04)
+
+Three headless runs per arm, Sonnet 5.5 at medium effort. The skill arm ran
+this branch's `stacked-pr-feedback` in local review mode with subagents
+allowed. Every unmatched finding was read; all were real (the `\d` defect, or
+layer 5's missing per-line rounding test) and labeled `true`.
+
+| | Plain | Skill |
+| --- | --- | --- |
+| `half-even-rounding` | 3/3 | 3/3 |
+| `coupon-cap-wrong-layer` | 1/3 | 3/3 |
+| `scope-leak` | 1/3 | 3/3 |
+| `grouping-regression` | 3/3 | 3/3 |
+| Mean recall | 0.67 | 1.0 |
+| Mean precision | 1.0 | 1.0 |
+| Decoy hits | 0/3 | 0/3 |
+| Mean cost | $0.07 | $0.13 |
+| Mean wall-clock | 0.6 min | 0.9 min |
+
+The skill found every plant in every run with no false positives, at about
+twice the cost. Plain review missed the wrong-layer fix and the scope leak in
+two of three runs. Those are the defects the skill's ownership and scope
+questions target, and the plants were designed from those questions, so this
+shows the skill does what it says rather than that it generalizes. Three runs
+per arm is too few for significance (pooled over the two plants, 6/6 against
+2/6).

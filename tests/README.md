@@ -127,7 +127,17 @@ receipt mistakes that every single run's tests missed. Those are the
 cross-group and scenario-shadowed rules the criteria map and the "fails on the
 naive implementation" rule target. For each of those two mutants, 4/4 against
 0/4 gives a two-sided Fisher exact p of about 0.03. Cost did not rise. Neither
-arm tests the existing API reliably.
+arm tested the existing API reliably.
+
+After the criteria map was changed so group 1 owns preserved behavior, four
+more skill runs (`apply_preserved_behavior` in the results file) killed all 11
+mutants every time, including `ExistingApi` (4/4, against 1/4 before and 0/4
+for single). Mean cost rose to $0.29 and time to 1.8 minutes. Transcripts
+show these runs working group by group, implementing, checking, and
+committing in 11–17 tool calls, where the earlier skill runs mostly batched
+the change into 4–13 bulk calls. One run caught and fixed a wrong assertion
+between groups this way. Four runs per version cannot show whether the
+one-line change caused that shift.
 
 ### Running it
 
@@ -337,3 +347,32 @@ scope leak in two of three runs. Pooled over those two plants, that is 6/6
 against 1/6 (two-sided Fisher exact p ≈ 0.015). The plants were designed from
 the skill's questions, so this shows the skill does what it says; the `loans`
 stack tests whether it generalizes.
+
+### Recorded result (2026-11-04, `loans`)
+
+Three headless runs per arm, set up as for `invoice`. Every finding was read.
+
+| | Plain | Skill |
+| --- | --- | --- |
+| `design-reuse` | 3/3 | 3/3 |
+| `exception-type` | 3/3 | 3/3 |
+| `spec-tampering` | 2/3 | 3/3 |
+| `signature-mismatch` | 3/3 | 3/3 |
+| `silent-spec-change` | 3/3 | 3/3 |
+| Mean recall | 0.93 | 1.0 |
+| Mean precision (labeled) | 1.0 | 1.0 |
+| Decoy hits | 0/3 | 0/3 |
+| Mean findings | 4.7 | 9 |
+| Mean cost | $0.12 | $0.18 |
+| Mean wall-clock | 0.5 min | 0.8 min |
+
+On design and spec fit, which are outside the skill's three questions, plain
+review is about as good as the skill. The skill's extra findings were real and
+of two kinds. Test gaps: renewal tests that never land a renewed due date on a
+closed day. Completion claims: every skill run flagged that layer 6 checks task
+6.3, a staff confirmation with no evidence, and no plain run did. That task is
+checked because the stack builder marks every task of a group. It was not
+planted, so it is reported here and not counted toward recall. Taken together,
+the skill's advantage is in test strength, layer ownership, scope, and
+completion claims. It does not make review better at spec reading in general,
+and it costs about 1.5 to 2 times as much.

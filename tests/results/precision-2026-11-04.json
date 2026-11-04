@@ -436,5 +436,428 @@
         }
       }
     ]
+  },
+  "apply_preserved_behavior": {
+    "case": "loans",
+    "skill": "skills/openspec-stack-apply/SKILL.md with group 1 owning preserved behavior (commit 747259e); compare with apply.runs single arm",
+    "notes": "Transcripts show these runs working group by group (implement, check, commit) in 11-17 tool calls; the earlier skill runs mostly used 4-13 bulk calls. Whether the skill change caused the shift is not established at n=4.",
+    "runs": [
+      {
+        "run": "skill-1",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.2759344,
+        "minutes": 1.7,
+        "spec_valid": true
+      },
+      {
+        "run": "skill-2",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [
+          "test_loans.DueDateTests.test_unknown_kind"
+        ],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.30146259999999997,
+        "minutes": 2.3,
+        "spec_valid": true
+      },
+      {
+        "run": "skill-3",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [
+          "test_loans.DueDateTest.test_unknown_kind"
+        ],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.3034823,
+        "minutes": 1.5,
+        "spec_valid": true
+      },
+      {
+        "run": "skill-4",
+        "arm": "skill",
+        "traps_passed": 11,
+        "traps_total": 11,
+        "mutants_killed": {
+          "RejectsDatetime": true,
+          "ChainedClosures": true,
+          "ExistingApi": true,
+          "OpenDaysOnly": true,
+          "BookGraceDay": true,
+          "FineCap": true,
+          "RenewFromDue": true,
+          "RenewalLimit": true,
+          "NoMutation": true,
+          "HoldRules": true,
+          "ReceiptCrossGroup": true
+        },
+        "mutants_killed_count": 11,
+        "mutants_total": 11,
+        "tests_failing_on_reference": [],
+        "layers": {
+          "loan-desk/1-due-dates": [],
+          "loan-desk/2-overdue-days": [],
+          "loan-desk/3-fines": [],
+          "loan-desk/4-renewals": [],
+          "loan-desk/5-holds": [],
+          "loan-desk/6-receipts": []
+        },
+        "tasks_done": 13,
+        "tasks_total": 14,
+        "unprovable_checked": [],
+        "out_of_scope": [],
+        "committed": 6,
+        "cost_usd": 0.27559600000000006,
+        "minutes": 1.6,
+        "spec_valid": true
+      }
+    ]
+  },
+  "review_loans": {
+    "stack": "loans",
+    "notes": "Every finding was read. Unmatched findings were real and labeled true: task 6.3 checked on layer 6 without evidence (an unplanted defect from the stack builder, flagged by 3/3 skill runs and 0/3 plain runs) and missing renewal tests for a closed-day due date (2 runs). Some test-gap findings were pattern-credited to a plant whose code finding the same run also reported; recall is unaffected.",
+    "runs": [
+      {
+        "run": "plain-1",
+        "arm": "plain",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": false,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 0.8,
+        "findings": 4,
+        "true_positives": 4,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "exception-type"
+          ],
+          "2": [
+            "signature-mismatch"
+          ],
+          "3": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1067458,
+        "minutes": 0.6,
+        "labels": {}
+      },
+      {
+        "run": "plain-2",
+        "arm": "plain",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 5,
+        "true_positives": 5,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "spec-tampering"
+          ],
+          "2": [
+            "exception-type"
+          ],
+          "3": [
+            "signature-mismatch"
+          ],
+          "4": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1233929,
+        "minutes": 0.6,
+        "labels": {}
+      },
+      {
+        "run": "plain-3",
+        "arm": "plain",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 5,
+        "true_positives": 5,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "spec-tampering"
+          ],
+          "2": [
+            "exception-type"
+          ],
+          "3": [
+            "signature-mismatch"
+          ],
+          "4": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.11632790000000001,
+        "minutes": 0.4,
+        "labels": {}
+      },
+      {
+        "run": "skill-1",
+        "arm": "skill",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 11,
+        "true_positives": 11,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "design-reuse"
+          ],
+          "2": [
+            "spec-tampering"
+          ],
+          "3": [
+            "exception-type"
+          ],
+          "4": [
+            "spec-tampering"
+          ],
+          "5": [
+            "spec-tampering"
+          ],
+          "6": [
+            "signature-mismatch"
+          ],
+          "7": [
+            "signature-mismatch"
+          ],
+          "8": [
+            "silent-spec-change"
+          ],
+          "9": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.18110320000000002,
+        "minutes": 0.8,
+        "labels": {
+          "10": true
+        }
+      },
+      {
+        "run": "skill-2",
+        "arm": "skill",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 8,
+        "true_positives": 8,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "exception-type"
+          ],
+          "2": [
+            "spec-tampering"
+          ],
+          "3": [
+            "spec-tampering"
+          ],
+          "5": [
+            "signature-mismatch"
+          ],
+          "6": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1610861,
+        "minutes": 0.7,
+        "labels": {
+          "4": true,
+          "7": true
+        }
+      },
+      {
+        "run": "skill-3",
+        "arm": "skill",
+        "plants": {
+          "design-reuse": true,
+          "exception-type": true,
+          "spec-tampering": true,
+          "signature-mismatch": true,
+          "silent-spec-change": true
+        },
+        "recall": 1.0,
+        "findings": 8,
+        "true_positives": 8,
+        "false_positives": 0,
+        "precision": 1.0,
+        "matched": {
+          "0": [
+            "design-reuse"
+          ],
+          "1": [
+            "exception-type"
+          ],
+          "2": [
+            "spec-tampering"
+          ],
+          "4": [
+            "signature-mismatch"
+          ],
+          "5": [
+            "signature-mismatch"
+          ],
+          "6": [
+            "silent-spec-change"
+          ]
+        },
+        "decoy_hits": [],
+        "repo_unchanged": true,
+        "cost_usd": 0.1938301,
+        "minutes": 0.9,
+        "labels": {
+          "3": true,
+          "7": true
+        }
+      }
+    ]
   }
 }

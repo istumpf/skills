@@ -1,0 +1,1 @@
+Confirmed: catalog exports use plain decimals without separators.

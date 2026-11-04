@@ -26,34 +26,34 @@ upgrade `gh`; do not use an API fallback.
 - **Auto:** only when the user asks for it. Apply fixes and post fix replies
   without asking. Disagreements, questions, spec conflicts, and rebase
   conflicts still wait for the user.
-- **Local review:** only when the user asks for a review. Before collecting,
-  start one read-only reviewer subagent per PR in parallel. This is a focused
-  precision pass: check spec fit, test claims, and completion claims. Give each
-  only its PR/base/head identifiers, diff and touched-file references, applicable
-  agent instructions, and matching acceptance criteria. Add a short verification
-  summary or decision only when it affects that PR's review. Reviewers may read
-  more source as needed; omit session history, full logs, unrelated specs, and
-  other layers' context. Each returns a compact JSON object with
-  `findings` (items with `pr`, `path`, `line`, `body`, and expected behavior),
-  `checked` (scope inspected), `executed` (commands, results, revisions), and
-  `not_verified` (coverage limits). For changed tests, assess what claim each
-  proves and what incorrect behavior would make it fail.
-  Reviewers share the checkout, so they must not run any command that moves
-  `HEAD` or edits files: read with `git show <head>:<path>` and `git diff`, and
-  run tests only in their own `git worktree add --detach <tmp-dir> <head>`,
-  removed afterwards.
-  Save only the combined findings list to a scratch file for `--local`; retain
-  coverage for the final report. Never post local findings. An empty static
-  review means no findings in the inspected scope, with runtime unverified.
-  For runtime-sensitive changes (dependencies, runner or build configuration),
-  the orchestrator remains responsible for executable verification; reviewers
-  need not duplicate it. Static review does not satisfy those checks.
+- **Local review:** only when the user or a calling skill asks for a review.
+  Before collecting, start read-only reviewer subagents in parallel: one for the
+  whole stack when its diff against trunk is under about 400 changed lines,
+  otherwise one per PR. Give each only its PR/base/head identifiers, diff and
+  touched-file references, applicable agent instructions, and the acceptance
+  criteria for its PRs (the caller's criteria map when given, else the matching
+  spec and design passages). Omit session history, logs, and other PRs'
+  context. Each answers, in order, then reports anything else it finds:
+  1. Does every criterion have a test that goes red on the naive
+     implementation? Name the criterion and the shortcut that would pass.
+  2. Does any cross-PR criterion break where one layer extends another?
+  3. Does any change fall outside its PR's scope?
 
-Local review supplements independent review of the pushed stack (for example,
-Codacy and a separate agent). Track the user's or repository's designated
-reviewers and their results at the reviewed revisions. A local pass or an empty
-feedback queue does not complete that independent review. If results are still
-pending, report the handoff and leave its acceptance criteria unchecked.
+  Reviewers share the checkout, so they read with `git show <head>:<path>` and
+  `git diff` and run nothing that moves `HEAD` or edits files. Checks already
+  ran; a reviewer runs code only to confirm a specific suspected finding, in
+  its own `git worktree add --detach <tmp-dir> <head>`, removed afterwards.
+  Each returns compact JSON: `findings` (items with `pr`, `path`, `line`,
+  `body`, and expected behavior), `checked` (scope inspected), `executed`
+  (commands, results, revisions), and `not_verified` (coverage limits).
+  Save only the combined findings list to a scratch file for `--local`; retain
+  coverage for the final report. Never post local findings. An empty review
+  means no findings in the inspected scope, with runtime unverified.
+
+Local review and an empty feedback queue supplement independent review of the
+pushed stack by the repository's designated reviewers (for example, Codacy or a
+separate agent). Report that review's status at the reviewed SHAs; while it is
+pending, its acceptance criteria stay unchecked.
 
 ## 1. Collect
 
@@ -112,14 +112,11 @@ For each owner PR from the bottom of the stack upward:
 Then `gh stack top` and `gh stack push`. Never push commits you have not
 inspected.
 
-For OpenSpec, reopen tasks whose acceptance criteria are unmet or unverified,
-rather than reopening tasks merely because review changed their code. Run
+For OpenSpec, reopen tasks whose acceptance criteria are now unmet or
+unverified, not tasks whose code merely changed. When tasks carry `evidence:`
+lines, keep them current for the tests you changed. Run
 `openspec validate <change> --type change --strict --no-interactive` after
-editing artifacts. Correct checkmarks with missing or stale evidence.
-Record criterion references, results, revisions, and relevant
-environment in the existing task file or ledger. Reassess evidence after fixes
-and restacking; rerun affected checks. CI required on the final published head
-must match that SHA; evidence-only edits need not invalidate code checks.
+editing artifacts.
 
 ## 4. Reply
 
@@ -146,10 +143,8 @@ in step 3.
 ## Finish
 
 Report per PR: items fixed (with commits), replies posted, items awaiting the
-user, restacked branches, checks run, review coverage and limits, and anything
-left unhandled. Reconcile fixes, required checks, and acceptance evidence at
-the final revisions before claiming completion. Report feedback handled,
-acceptance satisfied, and readiness separately: a marker reply or empty review
-does not prove acceptance. Include independent review status after push.
-Name unmet criteria and blockers. Never report the
-queue clear while actionable items remain. Do not merge PRs.
+user, restacked branches, checks run, review coverage and limits, independent
+review status, and unmet criteria. Report feedback handled, acceptance
+satisfied, and readiness separately; a marker reply or empty review does not
+prove acceptance. Report the queue clear only when no actionable items remain.
+Do not merge PRs.

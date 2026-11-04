@@ -8,6 +8,7 @@ import unittest
 import compare
 
 REFERENCE = compare.HERE / "reference"
+NAIVE = REFERENCE / "comparison-naive/invoice.py"
 SKILL = compare.HERE.parent / "skills/openspec-stack-apply/SKILL.md"
 
 
@@ -17,8 +18,8 @@ class ComparisonHarnessTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.base = Path(self.temp.name)
 
-    def finished_run(self, arm, implementation):
-        root = compare.prepare(arm, self.base / f"{arm}-{implementation}", "test-model",
+    def finished_run(self, arm, implementation, name=""):
+        root = compare.prepare(arm, self.base / f"{arm}-{implementation}{name}", "test-model",
                                SKILL if arm == "skill" else None)
         repo = root / "repo"
         shutil.copy2(REFERENCE / implementation / "invoice.py", repo / "invoice.py")
@@ -67,6 +68,52 @@ class ComparisonHarnessTests(unittest.TestCase):
         self.assertTrue(result["traps"]["ExistingApi"])
         failed = [t for t in compare.TRAPS if not result["traps"][t]]
         self.assertEqual(sorted(failed), sorted(set(compare.TRAPS) - {"SpecScenarios", "ExistingApi"}))
+
+    def test_each_mutant_fails_only_its_trap(self):
+        self.assertEqual(set(compare.MUTANTS), set(compare.TRAPS[1:]))
+        self.assertEqual(set(compare.TRAP_GROUPS), set(compare.TRAPS[1:]))
+        for trap in compare.MUTANTS:
+            results = compare.hidden_traps(compare.mutant_source(trap))
+            self.assertEqual([t for t, ok in results.items() if not ok], [trap])
+
+    def test_mutants_measure_the_agents_tests(self):
+        weak = compare.score(self.finished_run("single", "comparison"), validate_spec=False)
+        self.assertEqual((weak["tests_failing_on_reference"], weak["mutants_killed_count"]), ([], 0))
+        root = self.finished_run("single", "comparison", "-strong")
+        shutil.copy2(compare.HIDDEN, root / "repo/test_invoice.py")
+        # A test stricter than the spec fails on the reference and is set aside.
+        (root / "repo/test_strict.py").write_text(
+            "import unittest\nimport invoice\nclass Strict(unittest.TestCase):\n"
+            "    def test_message(self):\n"
+            "        with self.assertRaisesRegex(ValueError, 'expected digits'):\n"
+            "            invoice.parse_amount('abc')\n")
+        strong = compare.score(root, validate_spec=False)
+        self.assertEqual(strong["mutants_killed_count"], strong["mutants_total"])
+        self.assertEqual(strong["tests_failing_on_reference"], ["test_strict.Strict.test_message"])
+        broken = self.finished_run("single", "comparison", "-broken")
+        (broken / "repo/test_invoice.py").write_text(
+            "import unittest\nclass Wrong(unittest.TestCase):\n"
+            "    def test_fails(self):\n        self.fail()\n")
+        result = compare.score(broken, validate_spec=False)
+        self.assertEqual(result["tests_failing_on_reference"], ["test_invoice.Wrong.test_fails"])
+        self.assertIsNone(result["mutants_killed_count"])
+
+    def test_layers_are_scored_on_the_traps_they_own(self):
+        root = self.finished_run("skill", "comparison")
+        repo = root / "repo"
+        self.assertEqual(compare.score(root, validate_spec=False)["layers"], {})
+        # Group 1 lands naive parsing and group 2 fixes it: a lower layer's fix
+        # committed on a higher one.
+        shutil.copy2(NAIVE, repo / "invoice.py")
+        compare.git(repo, "checkout", "-q", "-b", "invoice-totals/1-amount-parsing")
+        compare.git(repo, "commit", "-qam", "feat: parsing")
+        shutil.copy2(REFERENCE / "comparison/invoice.py", repo / "invoice.py")
+        compare.git(repo, "checkout", "-q", "-b", "invoice-totals/2-line-totals")
+        compare.git(repo, "commit", "-qam", "feat: line totals")
+        layers = compare.score(root, validate_spec=False)["layers"]
+        self.assertEqual(layers, {"invoice-totals/1-amount-parsing": ["ExactParsing", "StrictParsing"],
+                                  "invoice-totals/2-line-totals": []})
+        self.assertIn("| Stacks with every layer clean | 0/1 |", compare.report([root]))
 
     def test_scope_and_report(self):
         good = self.finished_run("single", "comparison")

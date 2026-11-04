@@ -1,10 +1,12 @@
 # OpenSpec Stack Apply
 
 Implement an OpenSpec change in one session, with one stacked PR per task
-group. The agent works through the change top to bottom. Before each group it
-creates a new layer with GitHub's [`gh stack`](https://github.com/github/gh-stack),
-then implements and tests the group and commits it with its task markers. At the
-end it publishes the stack as draft PRs and reviews them with
+group. The agent first maps every rule in the proposal, spec, and design to the
+group that owns it. It then works through the change top to bottom. Before each
+group it creates a new layer with GitHub's [`gh stack`](https://github.com/github/gh-stack),
+then implements the group with tests that fail on a naive implementation of its
+rules, and commits it with task markers that name the proving tests. At the end
+it publishes the stack as draft PRs and reviews them with
 [Stacked PR Feedback](../stacked-pr-feedback/README.md).
 
 ## Why one session instead of a worker per group

@@ -33,7 +33,7 @@ From a checkout of the repository, on any branch in the stack:
 | --- | --- |
 | Default | Collect and triage, then wait for your approval before changing code, pushing, or replying |
 | `auto` | Apply fixes and post fix replies without asking; disagreements, questions, spec changes, and rebase conflicts still wait for you |
-| `review` | First run one local AI reviewer per PR in parallel and triage its findings with GitHub feedback; findings are never posted |
+| `review` | First run local AI reviewers in parallel (one for a small stack, else one per PR) that check each acceptance criterion has a test that would catch a naive implementation, and triage its findings with GitHub feedback; findings are never posted |
 
 Use `$stacked-pr-feedback` in Codex.
 

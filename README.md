@@ -56,7 +56,7 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 [GitHub Actions](.github/workflows/tests.yml) runs this suite on pushes, pull
 requests, and manual dispatches using Python 3.9 and 3.13. It needs no model
 credentials. [Evaluation instructions](tests/README.md) explain how to compare
-ways of applying a change with real agents.
+ways of applying a change and measure review precision with real agents.
 
 ## License
 

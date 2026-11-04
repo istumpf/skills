@@ -16,9 +16,13 @@ installed. It needs no OpenSpec CLI, model credentials, or PR service.
   GitHub data and a real local Git stack: stack discovery, handled-item
   detection, owner attribution, merge detection, and truncation warnings.
 - `test_comparison.py` checks the comparison harness below, including that
-  every hidden trap separates a correct implementation from a naive one.
+  every hidden trap separates a correct implementation from a naive one and
+  that each mutant fails its own trap and no other.
+- `test_review_bench.py` checks the review benchmark below: every layer passes
+  its own tests, only the planted traps fail, the decoys are correct, and
+  findings are matched and scored.
 
-Neither runs an agent. The skills themselves were exercised end to end against
+None of them runs an agent. The skills themselves were exercised end to end against
 a private sandbox repository; that run is not automated.
 
 ## Comparing ways to apply a change
@@ -86,13 +90,32 @@ python3 tests/compare.py report /tmp/cmp/*
 ```
 
 `score` writes `score.json` with per-trap results, whether the agent's own tests
-pass, completed tasks, files changed outside the expected scope since the
+pass, how strong those tests are, per-layer results, completed tasks, files changed outside the expected scope since the
 baseline commit (committed or not), the number of commits, and OpenSpec
 validation (`--skip-openspec` when the CLI is absent).
-Use `--cost` instead of `--claude-result` for other hosts. Do not take minutes
+Use `--cost` instead of `--claude-result` for other hosts.
+
+Test strength runs the agent's own `test_*.py` files against the reference
+implementation, then against one mutant per trap: the reference with that
+trap's plausible mistake applied (`MUTANTS` in `compare.py`). Tests that fail
+on the reference, because they are stricter than the spec or wrong, are listed
+in `tests_failing_on_reference` and set aside. A mutant is killed when any
+other test fails on it. `mutants_killed_count` therefore measures whether the
+agent wrote tests that would have caught each trap, not only whether its code
+avoided it. It is empty when no test both passes on the reference and fails
+without an implementation.
+
+Per-layer results apply to runs that leave `invoice-totals/<n>-*` branches.
+Each branch's committed `invoice.py` must pass every trap owned by group *n* or
+below (`TRAP_GROUPS`). A fix committed on a higher layer instead of the layer
+that owns it shows up as a failure on the lower one. Do not take minutes
 from the result's `duration_ms`: it omits time spent waiting on subagents.
 Rescoring keeps previously recorded cost and minutes. `report` prints a Markdown
 table grouped by arm.
+
+Keep skill text free of this fixture's specifics. A skill that names a trap's
+mistake (a rounding mode, a parsing shortcut) is handed the answer, and its
+score no longer measures the skill.
 
 Agent runs vary. Use at least three runs per arm before drawing conclusions,
 and read each session's report to see whether a review found defects or the
@@ -124,3 +147,59 @@ parent's own share (~$0.36) exceeded the whole single-agent run, so cheaper
 workers did not offset the overhead. This fixture cannot tell the two apart.
 Neither very long changes (where one context degrades) nor rules missing from
 the spec (where review has something to catch) are tested yet.
+
+### End-to-end sandbox run (2026-11-03)
+
+A private sandbox repository holds one end-to-end run of
+the skills before the criteria map and evidence lines were added: five stacked
+PRs (#2–#6), seeded review comments handled by `stacked-pr-feedback`, then
+merged. Scored afterwards with this harness, every PR head passed every trap
+its groups own, and the merged code passed all ten. Its tests killed 7 of 10
+mutants. They missed `CouponAfterLineDiscounts` (the tax-after-coupon test has
+no line discount, so coupon order is never observed), `ExistingApi` (no test of
+`format_cents`), and `NoMutation` (the tested line already sets
+`discount_percent`). Code that avoids every trap can still have tests that
+would not have caught the cross-group one. That gap is what the mutant score
+measures.
+
+## Measuring review precision
+
+`review_bench.py` measures a stack review on its own, with no remote or PRs.
+It builds the `invoice-totals` change as five local branches whose own tests all
+pass, with four planted defects and two decoys:
+
+| Plant | Layer | Defect |
+| --- | --- | --- |
+| `half-even-rounding` | 2 | `round()` on a `Decimal` rounds half-even; the layer's tests never hit a .5 case |
+| `coupon-cap-wrong-layer` | 3 or 5 | Layer 3 lets a coupon exceed the subtotal; layer 5 adds the cap, on the wrong layer |
+| `scope-leak` | 1 | An unrelated edit to `notes.txt` |
+| `grouping-regression` | 5 | Stripping every comma accepts `"1,23"` |
+| Decoys | 3, 4 | Integer `(x + 50) // 100` half-up rounding, which is correct |
+
+The layers live in [`fixtures/review/layers/`](fixtures/review/layers/).
+
+```sh
+python3 tests/review_bench.py prepare plain --directory /tmp/rev/plain-1 --model '<model>'
+python3 tests/review_bench.py prepare skill --directory /tmp/rev/skill-1 --model '<model>' \
+  --skill skills/stacked-pr-feedback/SKILL.md
+```
+
+Run each request as in the comparison above; the reviewer writes
+`findings.json` next to `repo/`. Then:
+
+```sh
+python3 tests/review_bench.py score /tmp/rev/skill-1 --claude-result /tmp/rev/skill-1/result.json --minutes 2
+python3 tests/review_bench.py report /tmp/rev/*
+```
+
+A finding counts toward a plant when it names one of the plant's layers and its
+path or body matches the plant's pattern; one finding may count toward several
+plants. Recall is the share of plants found. Precision is true findings over
+all findings. Findings that hit a decoy are false positives. So are unmatched
+findings, unless `labels.json` in the run directory marks their index `true`
+after you read them, for example `{"6": true}`. `repo_unchanged` checks that
+the reviewer moved no branch, left the top branch checked out, and edited
+nothing.
+
+Pattern matching is approximate. Read `unmatched` in each `score.json` before
+trusting a precision figure, and label any real defect the plants missed.

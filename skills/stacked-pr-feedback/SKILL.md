@@ -23,8 +23,9 @@ upgrade `gh`; do not use an API fallback.
 
 - **Default (ask first):** collect, triage, show the plan, and wait for approval
   before changing code, pushing, or replying.
-- **Auto:** only when the user asks for it. Apply fixes and post fix replies
-  without asking. Disagreements, questions, spec conflicts, and rebase
+- **Auto:** when the user asks for it, directly or through an explicitly invoked
+  workflow that authorizes automatic feedback handling. Apply fixes and post
+  fix replies without asking. Disagreements, questions, spec conflicts, and rebase
   conflicts still wait for the user.
 - **Local review:** only when the user or a calling skill asks for a review.
   Before collecting, start read-only reviewer subagents in parallel: one for the
@@ -50,10 +51,10 @@ upgrade `gh`; do not use an API fallback.
   coverage for the final report. Never post local findings. An empty review
   means no findings in the inspected scope, with runtime unverified.
 
-Local review and an empty feedback queue supplement independent review of the
-pushed stack by the repository's designated reviewers (for example, Codacy or a
-separate agent). Report that review's status at the reviewed SHAs; while it is
-pending, its acceptance criteria stay unchecked.
+Report repository-required review and CI status at the heads actually checked.
+An empty feedback queue is not proof that an external review has run. Keep tasks
+that explicitly require external results unchecked while those results are
+pending; this skill adds no independent-review requirement.
 
 ## 1. Collect
 
@@ -69,6 +70,14 @@ code predates the stack or has no line), a `sync` entry when the bottom PR's
 parent already merged, and warnings about truncated results. Handled means a
 resolved thread, or our marker reply as the latest thread comment or quoting
 the item's URL. Report warnings; do not assume truncated feedback is absent.
+
+For findings supplied by the user from an external web review, or retrieved
+from a review service without a GitHub comment, create a scratch findings list for
+`--local`. Include the PR, path, line when known, body, and source identifier.
+This imports existing feedback without starting local reviewers. Attribute each
+finding to its owning layer from the diff; ask only if the PR or intended
+behavior cannot be determined. Report dispositions of these items to the user;
+there is no GitHub thread to reply to.
 
 If `merged` is set, the stack has fully merged: report that and stop. If `sync`
 is set, do step 5 first.
@@ -97,9 +106,9 @@ For each owner PR from the bottom of the stack upward:
 
 1. `gh stack checkout <branch>`. Batch its actionable items into one focused
    change; stay inside that PR's scope. Make only the changes in the approved
-   plan. If a fix also needs a follow-up on another PR (for example, behavior
-   that a later PR extends), list that follow-up in the plan; if it only
-   becomes apparent while fixing, ask before committing it, even in auto mode.
+   plan. Include coordinated fixes on other layers in that plan. In auto mode,
+   continue with follow-ups needed to fix the same confirmed defect within the
+   existing spec; ask when a follow-up expands scope or changes required behavior.
 2. Run the repository's required checks. Commit with a message linking the
    item URLs; follow the repository's commit conventions.
 3. `gh stack rebase --upstack` to replay every PR above it. On exit 3

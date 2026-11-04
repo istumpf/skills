@@ -7,7 +7,7 @@ under `skills/`, with installation instructions, examples, and agent guidance.
 
 | Skill | Short version |
 | --- | --- |
-| [OpenSpec Stack Apply](skills/openspec-stack-apply/README.md) | Apply an OpenSpec change top to bottom in one session with one `gh stack` layer per task group, then publish draft PRs and review them. |
+| [OpenSpec Stack Apply](skills/openspec-stack-apply/README.md) | Apply an OpenSpec change top to bottom in one session with one `gh stack` layer per task group, then publish PRs ready for review and batch review feedback. |
 | [Stacked PR Feedback](skills/stacked-pr-feedback/README.md) | Triage review feedback across a PR stack, fix each issue on the PR that introduced it, restack, and reply. Works on any stack; optional local AI review. |
 
 ## Quick example
@@ -18,9 +18,11 @@ In the project containing your OpenSpec change:
 /openspec-stack-apply <change-name>
 ```
 
-It builds one stacked PR per task group, opens them as drafts, and reviews them
-with `stacked-pr-feedback`. Run `/stacked-pr-feedback` again whenever reviewers
-comment. Use `$` instead of `/` in Codex.
+It builds one tested PR per task group, opens them ready for review,
+and handles confirmed findings across the stack. Local LLM pre-review is
+opt-in. Bring findings from your human or ChatGPT web review back with
+`/stacked-pr-feedback auto` for batch fixes, or omit `auto` to approve the plan
+first. Use `$` instead of `/` in Codex.
 
 ## Installation
 

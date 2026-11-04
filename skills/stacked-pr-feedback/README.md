@@ -11,8 +11,9 @@ It needs Git, an authenticated `gh`, and GitHub's
 restacking, pushing, and post-merge sync. Stacks not created with `gh stack` are
 adopted first. In an OpenSpec repository it also checks feedback against the
 change's spec and proposes spec edits instead of silently changing required
-behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) runs it in
-review mode after publishing.
+behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) calls it in
+auto mode after publishing PRs ready for review, to handle review feedback.
+Local AI review is a separate opt-in mode.
 
 Your `gh` must support `gh pr view --json headRefOid`. If the field is
 unavailable, upgrade using the [official installation instructions](https://github.com/cli/cli#installation).

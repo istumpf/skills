@@ -91,6 +91,10 @@ Read each finding against the current code at its PR head, relevant tests,
 approved requirements, and repository instructions. Trace affected execution
 paths and lifecycles rather than relying on a changed file or design note alone.
 Distinguish normative requirements from explanatory implementation plans.
+Approved requirements are the repository's active normative contracts and,
+within its own scope, the assigned change's approved requirements, following
+repository precedence. A pending change does not authorize altering unrelated
+existing behavior. Escalate missing, conflicting, or ambiguous requirements.
 
 | Class | Meaning | Action |
 | --- | --- | --- |
@@ -140,8 +144,8 @@ Inspect applicable validation results at the actual revised head. A green
 general CI job does not replace explicitly required strict validation. Check
 exit codes and diagnostics and fix behavior-neutral documentation errors
 within authorized scope. When repository policy forbids spec editing in an
-implementation PR, use a separate documentation-only revision if routine PR
-creation is authorized. Preserve completed tasks and approved requirements
+implementation PR, use a separate documentation-only PR only when creating
+PRs is explicitly authorized; auto mode alone does not authorize it. Preserve completed tasks and approved requirements
 under repository rules. If a separate revision is unauthorized, report the
 specific restriction and proposed fix instead of silently leaving it failing.
 
@@ -182,8 +186,9 @@ Report per PR: items fixed (with commits), replies posted, items awaiting the
 user, restacked branches, checks run, review coverage and limits, independent
 review status, and unmet criteria. Report feedback handled, acceptance
 satisfied, and readiness separately; a marker reply or empty review does not
-prove acceptance. Report the queue clear only when actionable and contract-consistency findings
-are verified and remaining decisions or external blockers are identified.
+prove acceptance. Report the queue clear only when actionable and
+contract-consistency findings are verified and remaining decisions or external
+blockers are identified.
 A response containing only refusals or pending questions is not completed
 feedback handling while independent fixes remain.
 Do not merge PRs.

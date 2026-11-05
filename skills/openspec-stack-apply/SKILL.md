@@ -84,8 +84,9 @@ unavailable, report feedback handling as pending.
 Use the repository's configured tools for review findings not posted as GitHub
 comments. Include them in the same ownership and triage process, deduplicated
 by source identifier. Report their dispositions and any access limitations.
-Disputed findings and spec changes wait for the user; do not suppress them to
-make a check pass.
+Reply to demonstrably incorrect findings with evidence. Spec changes,
+unresolved product decisions, and conflicting requirements wait for the user;
+do not suppress them to make a check pass.
 
 After fixes, check analysis at the new heads. Allow up to two repair batches;
 then report anything still open or pending. Repository-required checks and

@@ -2,7 +2,8 @@
 
 Handle review feedback on a chain of stacked PRs. The agent collects unhandled
 comments from every PR in the stack, sorts each into fix, already addressed,
-disagree, spec change, or question, and shows you the plan. Approved fixes land
+contract consistency, disagree, spec change, or question, and shows you the
+plan. Approved fixes land
 on the PR that introduced the code, and every PR above it is restacked. Each
 item then gets a reply on GitHub.
 
@@ -11,10 +12,11 @@ It needs Git, an authenticated `gh`, and GitHub's
 restacking, pushing, and post-merge sync. Stacks not created with `gh stack` are
 adopted first. In an OpenSpec repository it also checks feedback against the
 change's spec, separating corrections that uphold approved requirements from
-proposals that change them. It can prepare a separate documentation-only
-revision when repository rules prohibit spec edits in implementation PRs,
-without silently changing required behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) calls it in
-auto mode after publishing PRs ready for review, to handle review feedback.
+proposals that change them. When repository rules prohibit spec edits in
+implementation PRs and you authorize new PRs, it can prepare a separate
+documentation-only PR, without silently changing required behavior.
+[OpenSpec Stack Apply](../openspec-stack-apply/README.md) calls it in auto mode
+after publishing PRs ready for review, to handle review feedback.
 Local AI review is a separate opt-in mode.
 
 Your `gh` must support `gh pr view --json headRefOid`. If the field is

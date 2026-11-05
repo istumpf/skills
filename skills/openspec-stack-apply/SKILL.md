@@ -31,6 +31,18 @@ and which later groups extend earlier behavior. Pin preserved APIs, constants,
 and formats with tests in group 1. Keep these notes brief; use the tasks file
 for completion markers and PR bodies for validation details.
 
+**Preflight before the first implementation layer:** run
+`openspec validate "<change>" --type change --strict --no-interactive`.
+Inspect the exit status and every diagnostic; do not treat unrelated green
+checks as proof of strict validity. Check that each pending group maps to
+observable acceptance criteria and that no decision needed to implement it
+remains unresolved. Correct behavior-neutral specification formatting or delta
+errors within repository policy before building the stack. If the approved
+change requires a separate planning/documentation PR, create one only when
+authorized, then pause implementation until it is integrated. Never rewrite
+approved requirements or completed tasks as a preflight shortcut; escalate
+genuine product decisions with the specific alternatives and consequences.
+
 ## Build the stack
 
 Each top-level task section is one group, in written order. Skip completed
@@ -58,14 +70,23 @@ rather than changing the required behavior to fit the implementation.
 
 ## Publish ready for review
 
-1. Run repository checks and
-   `openspec validate "<change>" --type change --strict --no-interactive`.
-   Inspect each layer's diff against its parent to confirm it contains only its
-   group's changes and remains understandable on its own.
-2. Run `gh stack submit --auto --open`. This creates PRs ready for review;
+1. Perform a bounded **cross-layer integration self-review** of the complete
+   stack against its approved contracts. Trace affected paths across layers and
+   inspect only applicable risks: validation at data boundaries, temporal
+   ordering and concurrency, lifecycle cleanup/reset, backward compatibility,
+   and authorization or information exposure. For each finding, identify the
+   owning layer, add a distinguishing regression test where appropriate, fix
+   there, restack, and rerun checks. Record what was examined and any limits;
+   do not claim that this replaces independent review or require a reviewer
+   subagent unless the user opts in.
+2. Run repository checks and repeat
+   `openspec validate "<change>" --type change --strict --no-interactive`
+   on the final contents. Inspect each layer's diff against its parent to
+   confirm it contains only its own changes and remains understandable.
+3. Run `gh stack submit --auto --open`. This creates PRs ready for review;
    this invocation authorizes publication without another
    readiness confirmation. Merging and archiving remain with the user.
-3. Use `gh pr edit` to give each PR its group title and a concise body explaining
+4. Use `gh pr edit` to give each PR its group title and a concise body explaining
    the behavior, dependency on the PR below, and tests/checks run. Link the
    relevant OpenSpec artifacts so an external reviewer can find the contract.
 

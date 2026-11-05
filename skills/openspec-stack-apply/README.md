@@ -4,10 +4,17 @@ Implement an OpenSpec change in one session, with one small, tested PR per task
 group. The agent builds layers while implementing, publishes them **ready for
 review**, and handles confirmed review findings across the stack in a batch. It then gives you the PR links for human or ChatGPT web review.
 
-Local LLM pre-review is opt-in. The goal is fewer manual handoffs while keeping
-PRs easy to review. The [evaluations](../../tests/README.md) found no general
-code-correctness advantage on the larger fixture; stack construction is the
-benefit this workflow provides.
+The skill runs strict specification validation before implementation, escalating
+unresolved decisions only for affected groups. It also performs a bounded
+cross-layer self-review derived from the change's contracts and code before
+publishing. That review records its scope and limits in the top PR and handoff;
+a separate reviewer agent remains opt-in.
+
+The goal is fewer manual handoffs while keeping PRs easy to review. The
+[recorded evaluations](../../tests/README.md) predate this preflight and
+self-review change: they did not find a correctness advantage on the larger
+case and found higher costs for the stack workflow. The new review pass has
+not been evaluated yet and may further increase time and model cost.
 
 ## Requirements
 

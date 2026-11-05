@@ -10,8 +10,10 @@ It needs Git, an authenticated `gh`, and GitHub's
 [`gh stack`](https://github.com/github/gh-stack) extension, which does the
 restacking, pushing, and post-merge sync. Stacks not created with `gh stack` are
 adopted first. In an OpenSpec repository it also checks feedback against the
-change's spec and proposes spec edits instead of silently changing required
-behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) calls it in
+change's spec, separating corrections that uphold approved requirements from
+proposals that change them. It can prepare a separate documentation-only
+revision when repository rules prohibit spec edits in implementation PRs,
+without silently changing required behavior. [OpenSpec Stack Apply](../openspec-stack-apply/README.md) calls it in
 auto mode after publishing PRs ready for review, to handle review feedback.
 Local AI review is a separate opt-in mode.
 
@@ -33,7 +35,7 @@ From a checkout of the repository, on any branch in the stack:
 | Request | Behavior |
 | --- | --- |
 | Default | Collect and triage, then wait for your approval before changing code, pushing, or replying |
-| `auto` | Apply fixes and post fix replies without asking; disagreements, questions, spec changes, and rebase conflicts still wait for you |
+| `auto` | Fix confirmed defects and behavior-preserving contract inconsistencies, verify and reply without asking; only genuine product decisions, unauthorized changes, and unsafe conflicts stop the work |
 | `review` | First run local AI reviewers in parallel (one for a small stack, else one per PR) that check each acceptance criterion has a test that would catch a naive implementation, and triage its findings with GitHub feedback; findings are never posted |
 
 Use `$stacked-pr-feedback` in Codex.
@@ -57,7 +59,10 @@ covers squash merges.
 - It pushes through `gh stack push`, and stops on rebase conflicts it cannot
   resolve unambiguously.
 - A review fix does not reopen OpenSpec tasks unless their acceptance criteria
-  are no longer met.
+  are no longer met. A design note alone does not justify leaving a verified
+  invariant violation unfixed.
+- Strict validation diagnostics are investigated independently of broad CI
+  results; documentation corrections respect repository change boundaries.
 - The collector reads up to 100 reviews, comments, and threads per PR and 50
   comments per thread; it warns when a PR has more.
 

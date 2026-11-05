@@ -4,8 +4,13 @@ Implement an OpenSpec change in one session, with one small, tested PR per task
 group. The agent builds layers while implementing, publishes them **ready for
 review**, and handles confirmed review findings across the stack in a batch. It then gives you the PR links for human or ChatGPT web review.
 
-Local LLM pre-review is opt-in. The goal is fewer manual handoffs while keeping
-PRs easy to review. The [evaluations](../../tests/README.md) found no general
+The skill runs strict specification validation before starting implementation
+and performs a bounded integration self-review across completed layers before
+publishing. It checks applicable data-boundary, concurrency, lifecycle,
+compatibility, and access-control risks without requiring a separate reviewer
+agent. Local LLM pre-review remains opt-in.
+
+The goal is fewer manual handoffs while keeping PRs easy to review. The [evaluations](../../tests/README.md) found no general
 code-correctness advantage on the larger fixture; stack construction is the
 benefit this workflow provides.
 

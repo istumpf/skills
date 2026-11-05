@@ -92,6 +92,7 @@ rather than changing the required behavior to fit the implementation.
 4. Use `gh pr edit` to give each PR its group title and a concise body explaining
    the behavior, dependency on the PR below, and tests/checks run. Link the
    relevant OpenSpec artifacts so an external reviewer can find the contract.
+   Include the step 1 self-review summary in the top PR's body.
 
 ## Batch review feedback
 

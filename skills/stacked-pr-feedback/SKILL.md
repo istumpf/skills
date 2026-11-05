@@ -23,10 +23,13 @@ upgrade `gh`; do not use an API fallback.
 
 - **Default (ask first):** collect, triage, show the plan, and wait for approval
   before changing code, pushing, or replying.
-- **Auto:** when the user asks for it, directly or through an explicitly invoked
-  workflow that authorizes automatic feedback handling. Apply fixes and post
-  fix replies without asking. Disagreements, questions, spec conflicts, and rebase
-  conflicts still wait for the user.
+- **Auto:** when explicitly requested by the user or an authorized calling
+  workflow, investigate and fix confirmed in-scope defects, missing validation,
+  and behavior-preserving contract inconsistencies without another approval.
+  Verify fixes and post evidence-backed replies. Stop for genuinely unresolved
+  product decisions, changes to approved requirements, authorization boundaries,
+  or conflicts that cannot be resolved safely. Reviewer disagreement alone
+  does not constitute a missing owner decision.
 - **Local review:** only when the user or a calling skill asks for a review.
   Before collecting, start read-only reviewer subagents in parallel: one for the
   whole stack when its diff against trunk is under about 400 changed lines,
@@ -84,31 +87,43 @@ is set, do step 5 first.
 
 ## 2. Triage
 
-Read each item against the current code at its PR head and, for OpenSpec, the
-change's proposal, design, and spec. Classify every item:
+Read each finding against the current code at its PR head, relevant tests,
+approved requirements, and repository instructions. Trace affected execution
+paths and lifecycles rather than relying on a changed file or design note alone.
+Distinguish normative requirements from explanatory implementation plans.
 
 | Class | Meaning | Action |
 | --- | --- | --- |
-| actionable | Correct and in scope | Fix on `owner_pr` (or the item's PR when `null`) |
-| addressed | Already fixed by a newer commit | Reply citing the commit; verify, since `outdated` alone is not proof |
-| disagree | Incorrect, out of scope, or conflicts with the spec as written | Draft a reasoned reply |
-| spec-change | Valid, but changes required behavior | Propose an edit to the OpenSpec artifacts; do not change code until approved |
-| question | Needs an answer, not code | Draft the answer |
+| actionable | Confirmed defect, broken invariant, or missing validation within approved behavior | Fix on `owner_pr` (or the item's PR when `null`); add regression coverage when relevant |
+| addressed | Already fixed by a newer commit | Verify the current head and reply with commit and evidence; `outdated` is not proof |
+| contract-consistency | Implementation or documentation contradicts an approved invariant without requiring new behavior | Restore that invariant and align documentation within repository change boundaries |
+| disagree | Demonstrably incorrect, duplicate, or outside authorized scope | Explain with code paths, tests, or authoritative requirements; a design citation alone is insufficient |
+| spec-change | Requires new or changed product behavior, policy, public contract, or numerical values | Explain alternatives and consequences; obtain approval before changing behavior |
+| question | An answer missing from all authoritative context | Answer from evidence where possible; escalate only the unresolved choice |
 
-An approving review does not clear its unresolved comments, and one comment
-may hold several findings. Show the table with item URL, PR, owner PR, class,
-and planned action or draft reply. In default mode, wait for approval and
-apply the user's edits to the plan.
+A design document's silence about a safeguard does not forbid it. Fix
+demonstrated lifecycle, integrity, or failure-handling gaps needed to uphold
+approved behavior without asking the owner to approve the same behavior again.
+Do not introduce new user-visible behavior, policy, or numerical tuning as a
+correctness fix. When authoritative requirements genuinely conflict, identify
+the exact clauses and request a decision. "The design says otherwise" without
+technical evidence does not justify dismissing a reproduced defect.
+
+An approving review does not clear unresolved comments; a single comment may
+contain multiple findings. Show each item's URL, PR, owner PR, class, and
+planned action or draft reply. In default mode, await approval and apply the
+user's edits. In auto mode, complete independent authorized fixes even if
+another item requires an owner decision.
 
 ## 3. Fix, lowest PR first
 
 For each owner PR from the bottom of the stack upward:
 
-1. `gh stack checkout <branch>`. Batch its actionable items into one focused
-   change; stay inside that PR's scope. Make only the changes in the approved
-   plan. Include coordinated fixes on other layers in that plan. In auto mode,
-   continue with follow-ups needed to fix the same confirmed defect within the
-   existing spec; ask when a follow-up expands scope or changes required behavior.
+1. `gh stack checkout <branch>`. Batch actionable and contract-consistency
+   findings into focused changes on their owning layers. Respect the approved
+   plan (or authorized auto scope) and coordinate fixes across layers. In auto
+   mode, complete follow-ups needed to restore approved behavior; escalate
+   only genuine new requirements, authorization boundaries, or unsafe conflicts.
 2. Run the repository's required checks. Commit with a message linking the
    item URLs; follow the repository's commit conventions.
 3. `gh stack rebase --upstack` to replay every PR above it. On exit 3
@@ -121,11 +136,20 @@ For each owner PR from the bottom of the stack upward:
 Then `gh stack top` and `gh stack push`. Never push commits you have not
 inspected.
 
-For OpenSpec, reopen tasks whose acceptance criteria are now unmet or
-unverified, not tasks whose code merely changed. When tasks carry `evidence:`
-lines, keep them current for the tests you changed. Run
+Inspect applicable validation results at the actual revised head. A green
+general CI job does not replace explicitly required strict validation. Check
+exit codes and diagnostics and fix behavior-neutral documentation errors
+within authorized scope. When repository policy forbids spec editing in an
+implementation PR, use a separate documentation-only revision if routine PR
+creation is authorized. Preserve completed tasks and approved requirements
+under repository rules. If a separate revision is unauthorized, report the
+specific restriction and proposed fix instead of silently leaving it failing.
+
+For OpenSpec, reopen tasks whose acceptance criteria are unmet or unverified,
+not tasks whose code merely changed. Keep `evidence:` lines current when
+their tests change. Run
 `openspec validate <change> --type change --strict --no-interactive` after
-editing artifacts.
+editing artifacts, and record the actual result.
 
 ## 4. Reply
 
@@ -138,8 +162,11 @@ later runs recognize handled items.
   `in-reply-to: <item url>`.
 - Local items: no reply; include them in the final report.
 
-Fixed items cite the commit SHA. Do not resolve threads, approve, or dismiss
-reviews unless the user asks or the repository's convention requires it.
+Fixed items cite the commit SHA and verification performed. For disagreements,
+give concrete reasons using current code, tests, and authoritative requirements;
+an unsupported "not changing" is not a resolution. Never post a handled marker
+for an unverified fix. Do not resolve threads, approve, or dismiss reviews
+unless requested or required by repository policy.
 
 ## 5. Sync after a merge
 
@@ -155,5 +182,8 @@ Report per PR: items fixed (with commits), replies posted, items awaiting the
 user, restacked branches, checks run, review coverage and limits, independent
 review status, and unmet criteria. Report feedback handled, acceptance
 satisfied, and readiness separately; a marker reply or empty review does not
-prove acceptance. Report the queue clear only when no actionable items remain.
+prove acceptance. Report the queue clear only when actionable and contract-consistency findings
+are verified and remaining decisions or external blockers are identified.
+A response containing only refusals or pending questions is not completed
+feedback handling while independent fixes remain.
 Do not merge PRs.

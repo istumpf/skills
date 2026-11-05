@@ -33,15 +33,16 @@ for completion markers and PR bodies for validation details.
 
 **Preflight before the first implementation layer:** run
 `openspec validate "<change>" --type change --strict --no-interactive`.
-Inspect the exit status and every diagnostic; do not treat unrelated green
-checks as proof of strict validity. Check that each pending group maps to
-observable acceptance criteria and that no decision needed to implement it
-remains unresolved. Correct behavior-neutral specification formatting or delta
-errors within repository policy before building the stack. If the approved
-change requires a separate planning/documentation PR, create one only when
-authorized, then pause implementation until it is integrated. Never rewrite
-approved requirements or completed tasks as a preflight shortcut; escalate
-genuine product decisions with the specific alternatives and consequences.
+Inspect the exit status and every diagnostic; unrelated green checks do not
+prove strict validity. Map pending groups to observable acceptance checks and
+identify any unresolved decisions *per group*. Escalate genuine product choices,
+leave affected groups pending, and continue independent groups whose contracts
+are settled when repository policy permits. Fix only behavior-neutral formatting
+and delta-syntax errors in the change's spec files, without changing requirement
+meaning. If policy requires a separate planning/documentation PR, create it
+when authorized; pause only the groups that depend on its changes until it
+merges. Do not publish the stack as ready while strict validation is failing.
+Never rewrite approved requirements or completed tasks to pass preflight.
 
 ## Build the stack
 
@@ -70,15 +71,17 @@ rather than changing the required behavior to fit the implementation.
 
 ## Publish ready for review
 
-1. Perform a bounded **cross-layer integration self-review** of the complete
-   stack against its approved contracts. Trace affected paths across layers and
-   inspect only applicable risks: validation at data boundaries, temporal
-   ordering and concurrency, lifecycle cleanup/reset, backward compatibility,
-   and authorization or information exposure. For each finding, identify the
-   owning layer, add a distinguishing regression test where appropriate, fix
-   there, restack, and rerun checks. Record what was examined and any limits;
-   do not claim that this replaces independent review or require a reviewer
-   subagent unless the user opts in.
+1. Perform a bounded **cross-layer integration self-review** against the
+   approved contracts and cumulative stack diff. Follow interactions where
+   one layer consumes or changes assumptions established by another, and
+   identify plausible failures that individual layer tests could miss.
+   Select risk areas from the actual requirements and changes, not a fixed
+   checklist or evaluation fixture. For confirmed findings, identify the
+   owning layer, add a distinguishing regression test where appropriate,
+   fix there, restack, and rerun checks. Summarize checked interactions,
+   executed checks, and remaining limits in the top PR body and handoff.
+   This does not replace independent review or require a reviewer subagent
+   unless the user opts in.
 2. Run repository checks and repeat
    `openspec validate "<change>" --type change --strict --no-interactive`
    on the final contents. Inspect each layer's diff against its parent to

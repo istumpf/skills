@@ -76,6 +76,45 @@ class FeedbackItemTests(unittest.TestCase):
         self.assertTrue(items[1]["outdated"])
         self.assertEqual(len(items[1]["comments"]), 3)
 
+    def test_edited_feedback_resurfaces_after_our_reply(self):
+        later = "2026-11-04T00:00:00Z"
+        mine = comment("done\n" + MARKER, login="me", url="t1r")
+        mine["createdAt"] = "2026-11-03T12:00:00Z"
+        edited = comment("nit", url="t1")
+        edited["lastEditedAt"] = later
+        rev = {**review("looks bad", "r1"), "lastEditedAt": later}
+        issue = {**comment("summary", url="c1"), "lastEditedAt": later}
+        stale = {**comment("summary", url="c3"), "lastEditedAt": "2026-11-03T06:00:00Z"}
+        data = pr_data(
+            threads=[thread([edited, mine])],
+            reviews=[rev],
+            comments=[issue, stale,
+                      {**comment("ok\nin-reply-to: r1\n" + MARKER, login="me", url="c2"),
+                       "createdAt": "2026-11-03T12:00:00Z"},
+                      {**comment("ok\nin-reply-to: c1\nin-reply-to: c3\n" + MARKER, login="me", url="c4"),
+                       "createdAt": "2026-11-03T12:00:00Z"}],
+        )
+        items = collect_feedback.feedback_items(pr(1, "g1", "main"), data)
+        self.assertEqual([(i["source"], i["url"], i["edited"]) for i in items],
+                         [("thread", "t1", True), ("review", "r1", True), ("comment", "c1", True)])
+
+    def test_editing_our_reply_rehandles_an_edited_summary(self):
+        summary = {**comment("walkthrough v2", url="c1"), "lastEditedAt": "2026-11-04T00:00:00Z"}
+        ours = {**comment("ok\nin-reply-to: c1\n" + MARKER, login="me", url="c2", database_id=42),
+                "createdAt": "2026-11-03T12:00:00Z"}
+        items = collect_feedback.feedback_items(pr(1, "g1", "main"), pr_data(comments=[summary, ours]))
+        self.assertEqual([(i["url"], i["edited"], i["our_reply"]) for i in items], [("c1", True, 42)])
+        ours["lastEditedAt"] = "2026-11-04T01:00:00Z"
+        self.assertEqual(collect_feedback.feedback_items(pr(1, "g1", "main"),
+                                                         pr_data(comments=[summary, ours])), [])
+
+    def test_thread_edited_before_our_reply_stays_handled(self):
+        early = comment("nit", url="t1")
+        early["lastEditedAt"] = "2026-11-03T06:00:00Z"
+        mine = {**comment("done\n" + MARKER, login="me", url="t1r"), "createdAt": "2026-11-03T12:00:00Z"}
+        items = collect_feedback.feedback_items(pr(1, "g1", "main"), pr_data(threads=[thread([early, mine])]))
+        self.assertEqual(items, [])
+
     def test_reports_truncation(self):
         data = pr_data()
         data["reviewThreads"]["totalCount"] = 150

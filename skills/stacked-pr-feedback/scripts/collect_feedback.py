@@ -21,18 +21,18 @@ query($owner: String!, $name: String!, $number: Int!) {
     pullRequest(number: $number) {
       reviews(first: 100) {
         totalCount
-        nodes { id state body url submittedAt author { login } }
+        nodes { id state body url submittedAt lastEditedAt author { login } }
       }
       comments(first: 100) {
         totalCount
-        nodes { id body url createdAt author { login } }
+        nodes { id databaseId body url createdAt lastEditedAt author { login } }
       }
       reviewThreads(first: 100) {
         totalCount
         nodes {
           id isResolved isOutdated path line originalLine
           comments(first: 50) {
-            nodes { id databaseId body url createdAt author { login } }
+            nodes { id databaseId body url createdAt lastEditedAt author { login } }
           }
         }
       }
@@ -77,15 +77,27 @@ def author(node):
     return (node.get("author") or {}).get("login", "ghost")
 
 
+def touched_at(node):
+    """When a comment last changed: its edit time, else its creation time."""
+    return max(node["createdAt"], node.get("lastEditedAt") or "")
+
+
 def handled_comment_urls(nodes):
-    """URLs our earlier top-level replies answered, via `in-reply-to: <url>` lines."""
-    urls = set()
+    """Map URLs our top-level replies answered (`in-reply-to: <url>`) to our latest such reply."""
+    urls = {}
     for node in nodes:
         if MARKER in node["body"]:
             for line in node["body"].splitlines():
                 if line.startswith("in-reply-to: "):
-                    urls.add(line.split(" ", 1)[1].strip())
+                    url = line.split(" ", 1)[1].strip()
+                    if url not in urls or touched_at(node) > urls[url]["at"]:
+                        urls[url] = {"at": touched_at(node), "id": node.get("databaseId")}
     return urls
+
+
+def edited_after(node, replied_at):
+    """True when the author changed the body after our reply, so the reply no longer covers it."""
+    return bool(replied_at) and (node.get("lastEditedAt") or "") > replied_at
 
 
 def feedback_items(pr, data):
@@ -94,25 +106,35 @@ def feedback_items(pr, data):
     answered = handled_comment_urls(replies)
     for thread in data["reviewThreads"]["nodes"]:
         comments = thread["comments"]["nodes"]
-        if thread["isResolved"] or not comments or MARKER in comments[-1]["body"]:
+        if thread["isResolved"] or not comments:
+            continue
+        replied_at = max((touched_at(c) for c in comments if MARKER in c["body"]), default=None)
+        edited = any(edited_after(c, replied_at) for c in comments if MARKER not in c["body"])
+        if MARKER in comments[-1]["body"] and not edited:
             continue
         items.append({
             "id": thread["id"], "pr": pr["number"], "source": "thread",
             "author": author(comments[0]), "url": comments[0]["url"],
             "reply_to": comments[0]["databaseId"],
             "path": thread["path"], "line": thread["line"] or thread["originalLine"],
-            "outdated": thread["isOutdated"],
+            "outdated": thread["isOutdated"], "edited": edited,
             "comments": [{"author": author(c), "body": c["body"]} for c in comments],
         })
     for review in data["reviews"]["nodes"]:
-        if review["body"].strip() and MARKER not in review["body"] and review["url"] not in answered:
+        reply = answered.get(review["url"])
+        edited = edited_after(review, reply and reply["at"])
+        if review["body"].strip() and MARKER not in review["body"] and (not reply or edited):
             items.append({"id": review["id"], "pr": pr["number"], "source": "review",
                           "author": author(review), "url": review["url"], "state": review["state"],
+                          "edited": edited, "our_reply": reply and reply["id"],
                           "comments": [{"author": author(review), "body": review["body"]}]})
     for comment in replies:
-        if MARKER not in comment["body"] and comment["url"] not in answered:
+        reply = answered.get(comment["url"])
+        edited = edited_after(comment, reply and reply["at"])
+        if MARKER not in comment["body"] and (not reply or edited):
             items.append({"id": comment["id"], "pr": pr["number"], "source": "comment",
                           "author": author(comment), "url": comment["url"],
+                          "edited": edited, "our_reply": reply and reply["id"],
                           "comments": [{"author": author(comment), "body": comment["body"]}]})
     return items
 

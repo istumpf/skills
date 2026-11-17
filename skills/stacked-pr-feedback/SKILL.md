@@ -71,8 +71,14 @@ It prints the stack from trunk upward, unhandled items, each item's `owner_pr`
 (the lowest PR whose own commits introduced the commented line; `null` when the
 code predates the stack or has no line), a `sync` entry when the bottom PR's
 parent already merged, and warnings about truncated results. Handled means a
-resolved thread, or our marker reply as the latest thread comment or quoting
-the item's URL. Report warnings; do not assume truncated feedback is absent.
+resolved thread (edits ignored), or our marker reply as the latest thread
+comment or quoting the item's URL, with no edit since that reply. AI reviewers
+often edit an existing comment or review instead of posting a new one, so an
+unresolved item whose body changed after our latest reply returns with
+`edited: true`; triage the current body as new feedback. If the edit only
+acknowledges a fix or repeats content already handled (status badges, rewritten
+summaries), reply without further changes. Report warnings; do not
+assume truncated feedback is absent.
 
 For findings supplied by the user from an external web review, or retrieved
 from a review service without a GitHub comment, create a scratch findings list for
@@ -163,7 +169,12 @@ later runs recognize handled items.
 - Thread items: reply in the thread with
   `gh api repos/<owner>/<repo>/pulls/<pr>/comments/<reply_to>/replies -f body=...`.
 - Review and comment items: post a PR comment whose body includes the line
-  `in-reply-to: <item url>`.
+  `in-reply-to: <item url>`. When the item has `our_reply` (it was edited after
+  our earlier reply), update that comment instead of posting another, keeping
+  its existing `in-reply-to:` lines:
+  `gh api -X PATCH repos/<owner>/<repo>/issues/comments/<our_reply> -f body=...`.
+  Edits do not notify anyone, so when a human added new feedback in the edit,
+  post a new comment instead.
 - Local items: no reply; include them in the final report.
 
 Fixed items cite the commit SHA and verification performed. For disagreements,

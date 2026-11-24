@@ -1,6 +1,6 @@
 # OpenSpec Stack Apply
 
-Implement an OpenSpec change in one session, with one small, tested PR per task
+Implement an OpenSpec change in one session, with one small, tested PR per implementation
 group. The agent builds layers while implementing, publishes them **ready for
 review**, and handles confirmed review findings across the stack in a batch. It then gives you the PR links for human or ChatGPT web review.
 

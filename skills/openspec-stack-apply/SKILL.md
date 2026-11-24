@@ -1,11 +1,11 @@
 ---
 name: openspec-stack-apply
-description: Apply an OpenSpec change in one session with one tested gh stack layer per task group, publish PRs ready for review, and batch review feedback. Use when the user wants an OpenSpec change implemented as stacked PRs.
+description: Apply an OpenSpec change in one session with one tested gh stack layer per implementation group, publish PRs ready for review, and batch review feedback. Use when the user wants an OpenSpec change implemented as stacked PRs.
 ---
 
 # OpenSpec Stack Apply
 
-Implement the change in this session, building one tested layer per task group.
+Implement the change in this session, building one tested layer per implementation group.
 Publish the stack ready for review, handle automated review feedback, then hand the PRs to
 the user for external review. Local LLM review is opt-in.
 
@@ -46,8 +46,12 @@ Never rewrite approved requirements or completed tasks to pass preflight.
 
 ## Build the stack
 
-Each top-level task section is one group, in written order. Skip completed
-groups. Name branches `<change>/<n>-<group-slug>`.
+Plan layers in task order. Identify the observable behavior each implementation
+group delivers and the contracts it consumes from earlier groups. Attach a
+verification-only section to the layer it checks, or to the top layer for
+cumulative checks. Give it a separate layer when its tests warrant independent
+review. Track its original task IDs and mark them complete after the checks pass.
+Skip completed groups. Name branches `<change>/<n>-<group-slug>`.
 
 For each pending group:
 
@@ -55,7 +59,10 @@ For each pending group:
    `gh stack init --base <trunk> <branch>` for the first, then
    `gh stack add <branch>`. Pass explicit branch names to avoid prompts.
    Exit 9 means Stacked PRs are unavailable: report it and stop.
-2. Implement this group's tasks and test its rules, including prose constraints
+2. For a reproducible bug, run a focused regression test before changing
+   production code. Confirm it fails on the reported behavior, then run it
+   again after the fix.
+   Implement this group's tasks and test its rules, including prose constraints
    and interactions with earlier groups. Choose cases that distinguish the
    required behavior from plausible shortcuts.
 3. Run the required checks for the stack so far and fix failures.
@@ -103,7 +110,8 @@ If analysis cannot be retrieved, report the limitation with the published PRs.
 Use `stacked-pr-feedback` in **auto** mode to collect and triage the stack's
 feedback, fix confirmed in-scope defects on their owning layers, restack, check,
 push, and reply in one batch. This workflow authorizes those fixes and replies.
-Use its local LLM review mode only if the user requests it. If the skill is
+Use its local LLM review mode only if the user requests it. Give the reviewer
+the spec path, base and tip commit IDs, and the cross-layer contracts to inspect. If the skill is
 unavailable, report feedback handling as pending.
 
 Use the repository's configured tools for review findings not posted as GitHub

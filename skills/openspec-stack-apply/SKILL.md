@@ -23,7 +23,7 @@ the user for external review. Local LLM review is opt-in.
    `--remote <name>` or ensure `remote.pushDefault`.
 4. Require a clean working tree; preserve user changes and ask if it is dirty.
 5. Resume an existing stack with `gh stack view --json`: reuse its layers and
-   continue from the first unfinished task. Check the existing stack once
+   resume at the first layer with an unchecked assigned task. Check the existing stack once
    before extending it; reopen tasks whose behavior is broken or unverified.
 
 Read the proposal, design, and specs once. Identify which group owns each rule
@@ -46,23 +46,25 @@ Never rewrite approved requirements or completed tasks to pass preflight.
 
 ## Build the stack
 
-Plan layers in task order. Identify the observable behavior each implementation
+Treat each top-level task section as one group and plan layers in task order. Identify the observable behavior each implementation
 group delivers and the contracts it consumes from earlier groups. Attach a
 verification-only section to the layer it checks, or to the top layer for
 cumulative checks. Give it a separate layer when its tests warrant independent
 review. Track its original task IDs and mark them complete after the checks pass.
-Skip completed groups. Name branches `<change>/<n>-<group-slug>`.
+List attached task IDs in the owning PR body so a resumed run can recover the mapping. Name branches `<change>/<n>-<group-slug>`.
 
-For each pending group:
+Visit planned layers in order, skipping a layer only when all its assigned tasks
+are complete, including attached verification tasks.
 
-1. Create its layer before implementing:
+1. If the layer exists, check out its branch with `gh stack checkout <branch>`.
+   Otherwise create it before working on its tasks:
    `gh stack init --base <trunk> <branch>` for the first, then
    `gh stack add <branch>`. Pass explicit branch names to avoid prompts.
    Exit 9 means Stacked PRs are unavailable: report it and stop.
 2. For a reproducible bug, run a focused regression test before changing
    production code. Confirm it fails on the reported behavior, then run it
    again after the fix.
-   Implement this group's tasks and test its rules, including prose constraints
+   Complete this layer’s pending tasks and test its rules, including prose constraints
    and interactions with earlier groups. Choose cases that distinguish the
    required behavior from plausible shortcuts.
 3. Run the required checks for the stack so far and fix failures.
@@ -70,7 +72,9 @@ For each pending group:
    Leave tasks needing unavailable stakeholder decisions or external results
    unchecked; continue independent groups when their prerequisites permit.
 
-If a later group exposes an earlier defect, fix it on its owning layer:
+When a resumed edit changes a layer beneath existing branches, restack and
+rerun checks on the affected layers. Use the same procedure when a later group
+exposes an earlier defect on its owning layer:
 `gh stack checkout <branch>`, commit, `gh stack rebase --upstack`, rerun checks,
 then `gh stack top`. On exit 3, resolve unambiguous conflicts, `git add`, and
 `gh stack rebase --continue`; otherwise abort and ask. Ask about spec conflicts

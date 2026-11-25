@@ -10,6 +10,11 @@ cross-layer self-review derived from the change's contracts and code before
 publishing. That review records its scope and limits in the top PR and handoff;
 a separate reviewer agent remains opt-in.
 
+Invoking the skill asks for the whole change: the agent keeps going across groups
+and ends early only for a user decision, a persistent tool or access failure, a
+stop condition in the skill, or the review wait limits. These instructions have
+not been evaluated yet.
+
 The goal is fewer manual handoffs while keeping PRs easy to review. The
 [recorded evaluations](../../tests/README.md) predate this preflight and
 self-review change: they did not find a correctness advantage on the larger

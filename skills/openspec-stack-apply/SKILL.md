@@ -9,6 +9,37 @@ Implement the change in this session, building one tested layer per implementati
 Publish the stack ready for review, handle automated review feedback, then hand the PRs to
 the user for external review. Local LLM review is opt-in.
 
+## Run to completion
+
+A user's invocation of this skill is an explicit request to implement the whole
+change as stacked PRs, one PR per group. It meets repository rules that allow
+multi-group work on explicit request. Output such as "stop after the assigned
+group" describes the default single-group mode, not this run. A narrower scope
+set by the user still binds, as do all other repository rules. If the repository
+forbids stacked work, or the user did not ask for stacked PRs, ask first.
+
+A group is **eligible** when it is in the user's scope, its prerequisites are
+met, and repository rules allow working on it now. If the repository requires
+groups to be completed in order, stop at the first blocked or incomplete group
+instead of skipping it.
+
+Work in one turn until the stack is published and review handling below is done.
+Setup, a commit, or a finished layer is not a stopping point. End the turn early
+only when:
+
+- the next step needs the user's answer and no eligible group remains;
+- a tool or access failure persists after the handling in "Before starting";
+- a step below says to stop;
+- the review wait limits below are reached.
+
+Leave blocked tasks unchecked and list them in the handoff. If a check fails
+because of this change, fix it. If it looks unrelated, rerun it once; if it
+still fails, continue only where repository rules allow. Report it as failed and
+do not bypass a required publication gate.
+
+Before you end the turn, reread the tasks file. If an unchecked task is in an
+eligible group, keep working. When told to continue, do the same.
+
 ## Before starting
 
 1. Select the named change, an unambiguous one from context, or the sole active
@@ -21,6 +52,14 @@ the user for external review. Local LLM review is opt-in.
    ask the user to run `gh extension install github/gh-stack`.
    Enable `git config rerere.enabled true`. With several remotes, pass
    `--remote <name>` or ensure `remote.pushDefault`.
+   If `gh` or `git` fails, handle it by cause:
+   - Transient network error: retry.
+   - Sandbox restriction on an authorized command: request escalation once, if
+     the harness allows it. Respect a denial. A sandbox can make a valid token
+     look invalid, so this applies to `gh auth status` too.
+   - Expired or invalid credentials: ask the user to reauthenticate.
+
+   `rerere` is optional: if enabling it fails, continue without it.
 4. Require a clean working tree; preserve user changes and ask if it is dirty.
 5. Resume an existing stack with `gh stack view --json`: reuse its layers and
    resume at the first layer with an unchecked assigned task. Check the existing stack once
@@ -43,6 +82,7 @@ meaning. If policy requires a separate planning/documentation PR, create it
 when authorized; pause only the groups that depend on its changes until it
 merges. Do not publish the stack as ready while strict validation is failing.
 Never rewrite approved requirements or completed tasks to pass preflight.
+Then start or resume the first eligible unfinished layer in the same turn.
 
 ## Build the stack
 
@@ -50,7 +90,7 @@ Treat each top-level task section as one group and plan layers in task order. Id
 group delivers and the contracts it consumes from earlier groups. Attach a
 verification-only section to the layer it checks, or to the top layer for
 cumulative checks. Give it a separate layer when its tests warrant independent
-review. Track its original task IDs and mark them complete after the checks pass.
+review, or when repository rules limit each PR to one numbered group. Track its original task IDs and mark them complete after the checks pass.
 List attached task IDs in the owning PR body so a resumed run can recover the mapping. Name branches `<change>/<n>-<group-slug>`.
 
 Visit planned layers in order, skipping a layer only when all its assigned tasks
@@ -58,7 +98,8 @@ are complete, including attached verification tasks.
 
 1. If the layer exists, check out its branch with `gh stack checkout <branch>`.
    Otherwise create it before working on its tasks:
-   `gh stack init --base <trunk> <branch>` for the first, then
+   `gh stack init --base <trunk> <branch>` for the first (`<trunk>` is a local
+   branch name such as `main`, not `origin/main`), then
    `gh stack add <branch>`. Pass explicit branch names to avoid prompts.
    Exit 9 means Stacked PRs are unavailable: report it and stop.
 2. For a reproducible bug, run a focused regression test before changing
@@ -70,7 +111,9 @@ are complete, including attached verification tasks.
 3. Run the required checks for the stack so far and fix failures.
 4. Mark completed tasks `- [x]` and commit code, tests, and task updates together.
    Leave tasks needing unavailable stakeholder decisions or external results
-   unchecked; continue independent groups when their prerequisites permit.
+   unchecked; continue with other groups only if they are eligible.
+5. Start the next eligible layer in the same turn. A commit is not a handoff. After the
+   last layer, go to "Publish ready for review".
 
 When a resumed edit changes a layer beneath existing branches, restack and
 rerun checks on the affected layers. Use the same procedure when a later group

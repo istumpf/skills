@@ -91,17 +91,21 @@ group delivers and the contracts it consumes from earlier groups. Attach a
 verification-only section to the layer it checks, or to the top layer for
 cumulative checks. Give it a separate layer when its tests warrant independent
 review, or when repository rules limit each PR to one numbered group. Track its original task IDs and mark them complete after the checks pass.
-List attached task IDs in the owning PR body so a resumed run can recover the mapping. Name branches `<change>/<n>-<group-slug>`.
+List attached task IDs in the owning PR body so a resumed run can recover the mapping. Name newly created group branches `<change>/<n>-<group-slug>`. When reusing an existing branch for the bottom layer, keep its current name.
 
 Visit planned layers in order, skipping a layer only when all its assigned tasks
 are complete, including attached verification tasks.
 
 1. If the layer exists, check out its branch with `gh stack checkout <branch>`.
-   Otherwise create it before working on its tasks:
-   `gh stack init --base <trunk> <branch>` for the first (`<trunk>` is a local
-   branch name such as `main`, not `origin/main`), then
-   `gh stack add <branch>`. Pass explicit branch names to avoid prompts.
-   Exit 9 means Stacked PRs are unavailable: report it and stop.
+   For the first layer, reuse the current worktree and branch when the branch is
+   intended for this change, is clean, and is based on `<trunk>`. Adopt it with
+   `gh stack init --base <trunk> <current-branch>`; do not create a duplicate
+   bottom branch. If there is no suitable branch, create the first layer with
+   `gh stack init --base <trunk> <branch>`. For each
+   later layer, create its child branch with `gh stack add <branch>`. `<trunk>`
+   is a local branch name such as `main`, not `origin/main`. Pass explicit
+   branch names to avoid prompts. Exit 9 means Stacked PRs are unavailable:
+   report it and stop.
 2. For a reproducible bug, run a focused regression test before changing
    production code. Confirm it fails on the reported behavior, then run it
    again after the fix.
@@ -109,6 +113,7 @@ are complete, including attached verification tasks.
    and interactions with earlier groups. Choose cases that distinguish the
    required behavior from plausible shortcuts.
 3. Run the required checks for the stack so far and fix failures.
+   For local `pnpm agent:check`, match each layer's actual PR base: use `origin/main` for the bottom layer, and the immediate parent branch for every child. After rebasing, use the branch that is now the PR base.
 4. Mark completed tasks `- [x]` and commit code, tests, and task updates together.
    Leave tasks needing unavailable stakeholder decisions or external results
    unchecked; continue with other groups only if they are eligible.
@@ -150,9 +155,26 @@ rather than changing the required behavior to fit the implementation.
 
 ## Batch review feedback
 
-Wait for configured automated checks and reviews on the published heads, with bounded polling (up to ten
-minutes per push). A missing or pending analysis is pending, not a clean result.
-If analysis cannot be retrieved, report the limitation with the published PRs.
+Use one shared ten-minute wait window per push. Before waiting, snapshot each
+published PR's `headRefOid` and checks.
+
+For each PR with pending checks or configured automated reviews on GitHub.com,
+listen for check-suite and review-submitted events on that PR with:
+
+  `gh event listen --resource <PR URL> --event <event-type> --follow --timeout <remaining>`
+
+Repeat `--event` for `com.github.pull_request.check_suite.status.changed.v1`
+and `com.github.pull_request.review.submitted.v1`. The event stream reports when attached and may reconnect
+without replaying events. Reread all current PR heads, checks, and review
+feedback after attachment, each event, and reconnection. Discard evidence from
+an older head; if a head changed, start tracking the new head within its push
+window. An event prompts a state read; it does not prove every check finished.
+
+If event listening is unavailable or unsupported, poll
+`gh pr checks <PR> --json name,state,bucket,link` and refresh review feedback at increasing
+intervals (30 seconds, then up to 60 seconds). Compare snapshots and report
+only status changes. At the ten-minute deadline, report anything still pending
+or unavailable; neither state counts as a clean result.
 
 Use `stacked-pr-feedback` in **auto** mode to collect and triage the stack's
 feedback, fix confirmed in-scope defects on their owning layers, restack, check,

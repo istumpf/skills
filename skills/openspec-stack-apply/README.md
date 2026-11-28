@@ -41,10 +41,11 @@ not been evaluated yet and may further increase time and model cost.
 /openspec-stack-apply <change-name>
 ```
 
-Use `$openspec-stack-apply` in Codex. The request authorizes creating branches,
-commits, pushes, PRs ready for review, and confirmed in-scope review fixes with
-replies. There is no separate readiness confirmation. The agent never merges or
-archives the change. Spec conflicts and disputed findings come back to you.
+Use `$openspec-stack-apply` in Codex. The request authorizes preparing the
+stacked branch chain, commits, pushes, PRs ready for review, and confirmed
+in-scope review fixes with replies. A suitable current worktree branch is reused
+as the bottom layer; child layers get their own branches. There is no separate readiness confirmation. The agent never merges
+or archives the change. Spec conflicts and disputed findings come back to you.
 
 | Group in `tasks.md` | Branch | PR base |
 | --- | --- | --- |
@@ -52,13 +53,19 @@ archives the change. Spec conflicts and disputed findings come back to you.
 | `## 2. Line totals` | `<change>/2-line-totals` | `<change>/1-amount-parsing` |
 | `## 3. Coupons` | `<change>/3-coupons` | `<change>/2-line-totals` |
 
+When the current branch is intended for the change, clean, and based on trunk,
+and has no unrelated commits or conflicting stack or PR ownership, it is reused
+as the bottom layer; the first branch name above is illustrative.
+Its PR base remains the trunk.
+
 If a later group exposes a bug in an earlier layer, the fix is committed on that
 layer and the layers above are rebased with `gh stack rebase --upstack`. Rerun
 the command to resume: it continues from the existing stack and the first
 unfinished task. Task markers record completion; PR bodies record validation.
 
-Configured automated checks and reviews are checked on the published heads, with up to ten minutes of
-waiting per push and two repair batches. Anything still pending is reported.
+Check current published heads for automated checks and reviews. Prefer GitHub change events, with a quiet
+periodic reconciliation even while listening; allow one shared ten-minute window
+per push and report any remaining pending state.
 Once you finish your external review, bring its findings back with
 `/stacked-pr-feedback auto` to have the agent apply confirmed fixes across the
 stack, or omit `auto` to approve its plan first.

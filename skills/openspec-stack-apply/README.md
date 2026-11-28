@@ -54,7 +54,8 @@ or archives the change. Spec conflicts and disputed findings come back to you.
 | `## 3. Coupons` | `<change>/3-coupons` | `<change>/2-line-totals` |
 
 When the current branch is intended for the change, clean, and based on trunk,
-it is reused as the bottom layer; the first branch name above is illustrative.
+and has no unrelated commits or conflicting stack or PR ownership, it is reused
+as the bottom layer; the first branch name above is illustrative.
 Its PR base remains the trunk.
 
 If a later group exposes a bug in an earlier layer, the fix is committed on that
@@ -63,7 +64,8 @@ the command to resume: it continues from the existing stack and the first
 unfinished task. Task markers record completion; PR bodies record validation.
 
 Check current published heads for automated checks and reviews. Prefer GitHub change events, with a quiet
-bounded polling fallback; allow up to ten minutes per push and report any remaining pending state.
+periodic reconciliation even while listening; allow one shared ten-minute window
+per push and report any remaining pending state.
 Once you finish your external review, bring its findings back with
 `/stacked-pr-feedback auto` to have the agent apply confirmed fixes across the
 stack, or omit `auto` to approve its plan first.

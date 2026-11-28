@@ -98,7 +98,10 @@ are complete, including attached verification tasks.
 
 1. If the layer exists, check out its branch with `gh stack checkout <branch>`.
    For the first layer, reuse the current worktree and branch when the branch is
-   intended for this change, is clean, and is based on `<trunk>`. Adopt it with
+   intended for this change, is clean, and is based on `<trunk>`. Exclude
+   detached HEAD, trunk itself, branches belonging to another stack or PR, and
+   branches with unrelated commits. Inspect the diff and PR target before
+   adoption; preserve unrelated work. Adopt a suitable branch with
    `gh stack init --base <trunk> <current-branch>`; do not create a duplicate
    bottom branch. If there is no suitable branch, create the first layer with
    `gh stack init --base <trunk> <branch>`. For each
@@ -113,7 +116,11 @@ are complete, including attached verification tasks.
    and interactions with earlier groups. Choose cases that distinguish the
    required behavior from plausible shortcuts.
 3. Run the required checks for the stack so far and fix failures.
-   For local `pnpm agent:check`, match each layer's actual PR base: use `origin/main` for the bottom layer, and the immediate parent branch for every child. After rebasing, use the branch that is now the PR base.
+   Use the repository's check command if available. Validate each layer against
+   its actual PR base: the selected remote's freshly fetched trunk ref (or its
+   pinned base SHA) for the bottom layer, and the immediate parent for each
+   child. Verify bases again after restacking; do not replace per-layer checks
+   with a cumulative top-layer check.
 4. Mark completed tasks `- [x]` and commit code, tests, and task updates together.
    Leave tasks needing unavailable stakeholder decisions or external results
    unchecked; continue with other groups only if they are eligible.
@@ -155,26 +162,29 @@ rather than changing the required behavior to fit the implementation.
 
 ## Batch review feedback
 
-Use one shared ten-minute wait window per push. Before waiting, snapshot each
-published PR's `headRefOid` and checks.
+Use one monotonic ten-minute deadline for the entire pushed stack. Snapshot each
+PR's head, checks, statuses, and configured review sources before waiting.
+Run listeners concurrently and nonblocking, consuming stdout and stderr, so
+all PRs can be monitored and reconciled during the same window. Subscribe to
+`com.github.pull_request.check_suite.status.changed.v1`,
+`com.github.pull_request.review.submitted.v1`, and
+`com.github.pull_request.head.changed.v1`; state changes may also be useful.
+Use `gh event listen --resource <PR URL> --event <event-type> --follow --timeout <remaining>`
+with repeated `--event` flags. Where streaming is unavailable, use bounded
+one-shot waits or polling. GitHub CLI 2.105.0 or later and account access are
+required; unsupported commands or 403 responses trigger polling fallback.
 
-For each PR with pending checks or configured automated reviews on GitHub.com,
-listen for check-suite and review-submitted events on that PR with:
-
-  `gh event listen --resource <PR URL> --event <event-type> --follow --timeout <remaining>`
-
-Repeat `--event` for `com.github.pull_request.check_suite.status.changed.v1`
-and `com.github.pull_request.review.submitted.v1`. The event stream reports when attached and may reconnect
-without replaying events. Reread all current PR heads, checks, and review
-feedback after attachment, each event, and reconnection. Discard evidence from
-an older head; if a head changed, start tracking the new head within its push
-window. An event prompts a state read; it does not prove every check finished.
-
-If event listening is unavailable or unsupported, poll
-`gh pr checks <PR> --json name,state,bucket,link` and refresh review feedback at increasing
-intervals (30 seconds, then up to 60 seconds). Compare snapshots and report
-only status changes. At the ten-minute deadline, report anything still pending
-or unavailable; neither state counts as a clean result.
+Events prompt a fresh read, not a conclusion. Reconcile all heads, checks,
+statuses, conversation comments, and configured review sources periodically
+(every 30–60 seconds), even while listeners work: some updates emit no event.
+Read again after attachment, reconnection, each event, and on every exit or
+timeout. Invalidate evidence for changed heads. Never restart the shared
+clock for a PR, event, or reconnection. Stop early when all configured analyses
+are terminal; cancel listeners and clean up on completion or failure. Exit 8
+means the listener timed out, not that analysis passed or the PR failed.
+Subscriptions can persist after exit and are limited; clean up only those
+created and owned by this run when appropriate. Report pending or unavailable
+analysis distinctly; neither is a clean result.
 
 Use `stacked-pr-feedback` in **auto** mode to collect and triage the stack's
 feedback, fix confirmed in-scope defects on their owning layers, restack, check,
